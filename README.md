@@ -8,8 +8,11 @@
 </p>
 
 <p align="center">
+  <a href="https://ghostchat-vjvj.onrender.com">
+    <img src="https://img.shields.io/badge/Live_App-Render-46E3B7?style=for-the-badge&logo=render&logoColor=black" />
+  </a>
   <a href="https://praneethsai050-cmd.github.io/GhostChat/">
-    <img src="https://img.shields.io/badge/Live_Demo-GitHub_Pages-10B981?style=for-the-badge&logo=googlechrome&logoColor=white" />
+    <img src="https://img.shields.io/badge/Mirror-GitHub_Pages-10B981?style=for-the-badge&logo=googlechrome&logoColor=white" />
   </a>
   <a href="https://github.com/sponsors/praneethsai050-cmd">
     <img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" />
@@ -192,9 +195,10 @@ GhostChat enforces strict data hygiene:
 
 ## 🛠️ Deployment & Quickstart
 
-### Method 1: Live Web Demo (Zero Installation)
-Visit the live deployment directly on GitHub Pages:  
-👉 **[https://praneethsai050-cmd.github.io/GhostChat/](https://praneethsai050-cmd.github.io/GhostChat/)**
+### Method 1: Live Web App (Direct & Instant)
+Launch GhostChat directly:  
+👉 **[https://ghostchat-vjvj.onrender.com](https://ghostchat-vjvj.onrender.com)**  
+*(Static mirror also available on [GitHub Pages](https://praneethsai050-cmd.github.io/GhostChat/))*
 
 ---
 
