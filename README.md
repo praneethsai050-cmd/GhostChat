@@ -106,3 +106,4 @@ GhostChat/
 
 ## 📜 License
 MIT License. Free for open source and personal use.
+ 
