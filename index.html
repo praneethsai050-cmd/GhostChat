@@ -10,64 +10,44 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- PeerJS CDN -->
-  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <!-- Socket.io client -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
   <style>
-    /* Custom scrollbar for dark sleek aesthetic */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.6);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(51, 65, 85, 0.6);
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(99, 102, 241, 0.6);
-    }
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.05); opacity: 0.4; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-    .recording-pulse {
-      animation: pulse-ring 1.5s infinite ease-in-out;
-    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased h-screen flex flex-col selection:bg-indigo-500 selection:text-white overflow-hidden">
 
-  <!-- Top Header Navigation -->
+  <!-- Header -->
   <header class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-slate-900/60 backdrop-blur shrink-0 z-10">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
         <i data-lucide="ghost" class="w-5 h-5 text-white"></i>
       </div>
       <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">GhostChat</h1>
+        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          GhostChat
           <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
             Live
           </span>
-        </div>
+        </h1>
         <p class="text-[11px] text-slate-400">Talk to random strangers 1-on-1</p>
       </div>
     </div>
 
-    <!-- Status Badge -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50 text-xs font-medium text-slate-300">
-        <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-        <span id="status-text">Offline</span>
-      </div>
+    <!-- Online Status Indicator -->
+    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50 text-xs font-medium text-slate-300">
+      <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+      <span id="status-indicator">Offline</span>
     </div>
   </header>
 
-  <!-- Clean Minimal Landing Screen -->
-  <main id="idle-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center max-w-xl mx-auto overflow-y-auto">
+  <!-- Landing Screen -->
+  <main id="landing-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center max-w-xl mx-auto overflow-y-auto">
     <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 text-indigo-400 shadow-xl shadow-indigo-500/10">
       <i data-lucide="message-square" class="w-8 h-8 text-indigo-400"></i>
     </div>
@@ -77,50 +57,17 @@
     </h2>
     
     <p class="mt-3 text-slate-400 text-sm sm:text-base leading-relaxed max-w-md">
-      Instant, free 1-on-1 chat. Meet random people from all over the world or share a direct room link.
+      Chat anonymously with random strangers worldwide. Completely free, no login required.
     </p>
 
-    <!-- Matchmaking Controls -->
     <div class="mt-8 flex flex-col items-center gap-3 w-full max-w-xs">
       <button
-        id="btn-start"
-        onclick="app.startMatchmaking()"
+        id="start-btn"
         class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-semibold text-sm shadow-xl shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
       >
         <i data-lucide="sparkles" class="w-4 h-4"></i>
         <span>Start Chatting</span>
       </button>
-
-      <!-- Instant 1-Click Shareable Link Button -->
-      <button
-        onclick="app.createAndCopyShareLink()"
-        class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow"
-      >
-        <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-400"></i>
-        <span id="share-link-text">Create & Copy Direct Chat Link</span>
-      </button>
-
-      <div class="flex items-center gap-2 w-full text-slate-500 text-xs my-0.5">
-        <div class="flex-1 h-px bg-slate-800"></div>
-        <span>or join with code</span>
-        <div class="flex-1 h-px bg-slate-800"></div>
-      </div>
-
-      <div class="flex items-center gap-2 w-full">
-        <input
-          id="custom-room-input"
-          type="text"
-          placeholder="Enter room code..."
-          class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-          onkeydown="if(event.key==='Enter') app.joinCustomRoom()"
-        />
-        <button
-          onclick="app.joinCustomRoom()"
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold cursor-pointer transition-colors shadow-md shadow-indigo-600/20"
-        >
-          Join
-        </button>
-      </div>
     </div>
 
     <p class="mt-6 text-[11px] text-slate-500">
@@ -130,1042 +77,280 @@
 
   <!-- Active Chat Screen (Initially Hidden) -->
   <main id="chat-screen" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto overflow-hidden">
-    <!-- Chat Messages Scroll Container -->
-    <div id="messages-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-      
-      <!-- Waiting Spinner Indicator -->
-      <div id="waiting-indicator" class="hidden flex-col items-center justify-center h-full text-slate-400 gap-3 py-12">
+    <!-- Messages Scroll Box -->
+    <div id="messages-box" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+      <!-- Waiting Indicator -->
+      <div id="waiting-spinner" class="hidden flex-col items-center justify-center h-full text-slate-400 gap-3 py-12">
         <div class="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        <p class="text-sm font-semibold text-slate-200">Looking for a stranger...</p>
-        <p id="waiting-details" class="text-xs text-slate-400">Connecting you with someone...</p>
-        
-        <!-- Quick copy current room link while waiting -->
-        <div id="waiting-share-box" class="mt-2 flex flex-col items-center gap-2">
-          <p class="text-[11px] text-slate-500">Want to chat with someone specific right now?</p>
-          <button
-            onclick="app.copyCurrentRoomLink()"
-            class="px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs flex items-center gap-1.5 cursor-pointer"
-          >
-            <i data-lucide="copy" class="w-3 h-3"></i>
-            <span id="waiting-copy-text">Copy Invite Link</span>
-          </button>
-        </div>
-
-        <button
-          onclick="app.disconnect()"
-          class="mt-3 px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-rose-400 border border-slate-800 cursor-pointer"
-        >
-          Cancel
-        </button>
-      </div>
-
-      <!-- Messages will be injected here -->
-      <div id="messages-list" class="space-y-4"></div>
-
-      <!-- Partner Typing Indicator -->
-      <div id="typing-indicator" class="hidden items-center gap-2 text-xs text-slate-400 italic px-2">
-        <span>Stranger is typing</span>
-        <span class="inline-flex gap-1 items-center">
-          <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-          <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-          <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
-        </span>
+        <p class="text-sm font-semibold text-slate-200">Searching for a stranger...</p>
+        <p class="text-xs text-slate-400">Looking for someone available...</p>
       </div>
 
       <div id="messages-anchor"></div>
     </div>
 
+    <!-- Partner Typing Indicator -->
+    <div id="typing-indicator" class="hidden items-center gap-2 text-xs text-slate-400 italic px-6 pb-2">
+      <span>Stranger is typing</span>
+      <span class="inline-flex gap-1 items-center">
+        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
+      </span>
+    </div>
+
     <!-- Action & Input Bar -->
     <footer class="p-3 sm:p-4 border-t border-slate-800 bg-slate-900/70 backdrop-blur shrink-0">
-      <form id="chat-form" onsubmit="app.handleSendMessage(event)" class="flex items-center gap-2">
+      <form id="chat-form" onsubmit="event.preventDefault(); sendMessage();" class="flex items-center gap-2">
         <!-- Stop / Next Button -->
         <button
-          id="btn-disconnect"
+          id="disconnect-btn"
           type="button"
-          onclick="app.toggleChat()"
           class="px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer"
-          title="Disconnect or Next (Esc)"
+          title="Stop or Find Next (Esc)"
         >
-          <i id="btn-disconnect-icon" data-lucide="user-x" class="w-4 h-4"></i>
-          <span id="btn-disconnect-text">Stop</span>
+          <i id="disconnect-icon" data-lucide="user-x" class="w-4 h-4"></i>
+          <span id="disconnect-text">Stop</span>
         </button>
 
-        <!-- Voice Message Recorder Button -->
-        <button
-          id="btn-record"
-          type="button"
-          onclick="app.toggleVoiceRecording()"
-          class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors shrink-0 cursor-pointer"
-          title="Send voice note"
-        >
-          <i id="record-icon" data-lucide="mic" class="w-4 h-4 text-indigo-400"></i>
-          <span id="record-label" class="hidden text-xs font-semibold text-rose-400 ml-1.5">0s Send</span>
-        </button>
-
-        <!-- Main Text Input -->
+        <!-- Message Input -->
         <input
-          id="chat-input"
+          id="msg-input"
           type="text"
+          placeholder="Looking for a stranger..."
           autocomplete="off"
-          placeholder="Type a message... (Press Enter to send)"
-          oninput="app.handleTyping()"
+          disabled
           class="flex-1 bg-slate-800/80 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         />
 
         <!-- Send Button -->
         <button
-          id="btn-send"
+          id="send-btn"
           type="submit"
+          disabled
           class="p-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:hover:bg-indigo-600 transition-colors shrink-0 shadow-md shadow-indigo-600/20 cursor-pointer"
         >
           <i data-lucide="send" class="w-4 h-4"></i>
         </button>
       </form>
 
-      <!-- Bottom Helper Info -->
       <div class="flex justify-between items-center mt-2 px-1 text-[11px] text-slate-500">
         <span>Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono text-[10px]">Esc</kbd> to Stop / Next</span>
-        <span class="flex items-center gap-1 text-slate-400">
-          <i data-lucide="clock" class="w-3 h-3 text-amber-400"></i> Messages disappear in 30s
-        </span>
+        <span class="text-slate-400">Anonymous 1-on-1</span>
       </div>
     </footer>
   </main>
 
-  <!-- Application Logic -->
   <script>
-    /**
-     * Web Crypto API Helper for ECDH (P-256) Key Agreement & AES-256-GCM
-     * (Runs completely in background with zero tech clutter on UI)
-     */
-    const CryptoService = {
-      async generateKeyPair() {
-        return await window.crypto.subtle.generateKey(
-          { name: "ECDH", namedCurve: "P-256" },
-          true,
-          ["deriveKey", "deriveBits"]
-        );
-      },
-
-      async exportPublicKey(key) {
-        const exported = await window.crypto.subtle.exportKey("raw", key);
-        return this.arrayBufferToBase64(exported);
-      },
-
-      async importPublicKey(base64Str) {
-        const buffer = this.base64ToArrayBuffer(base64Str);
-        return await window.crypto.subtle.importKey(
-          "raw",
-          buffer,
-          { name: "ECDH", namedCurve: "P-256" },
-          true,
-          []
-        );
-      },
-
-      async deriveSharedKey(privateKey, remotePublicKey) {
-        return await window.crypto.subtle.deriveKey(
-          { name: "ECDH", public: remotePublicKey },
-          privateKey,
-          { name: "AES-GCM", length: 256 },
-          true,
-          ["encrypt", "decrypt"]
-        );
-      },
-
-      async encryptData(sharedKey, data) {
-        const iv = window.crypto.getRandomValues(new Uint8Array(12));
-        const enc = new TextEncoder();
-        const encoded = enc.encode(typeof data === 'string' ? data : JSON.stringify(data));
-
-        const cipherBuffer = await window.crypto.subtle.encrypt(
-          { name: "AES-GCM", iv: iv },
-          sharedKey,
-          encoded
-        );
-
-        return {
-          ciphertext: this.arrayBufferToBase64(cipherBuffer),
-          iv: this.arrayBufferToBase64(iv.buffer)
-        };
-      },
-
-      async decryptData(sharedKey, ciphertextBase64, ivBase64) {
-        const cipherBuffer = this.base64ToArrayBuffer(ciphertextBase64);
-        const ivBuffer = this.base64ToArrayBuffer(ivBase64);
-
-        const decryptedBuffer = await window.crypto.subtle.decrypt(
-          { name: "AES-GCM", iv: new Uint8Array(ivBuffer) },
-          sharedKey,
-          cipherBuffer
-        );
-
-        const dec = new TextDecoder();
-        const text = dec.decode(decryptedBuffer);
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          return text;
-        }
-      },
-
-      arrayBufferToBase64(buffer) {
-        let binary = '';
-        const bytes = new Uint8Array(buffer);
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-      },
-
-      base64ToArrayBuffer(base64) {
-        const binary_string = window.atob(base64);
-        const len = binary_string.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-          bytes[i] = binary_string.charCodeAt(i);
-        }
-        return bytes.buffer;
-      }
-    };
-
-    /**
-     * Client-Side Content Safety Guard
-     * Scans for high-toxicity or extreme hate/spam words client-side
-     */
-    const SafetyModerator = {
-      blockedPatterns: [
-        /\b(kill\s+yourself|kys)\b/i,
-        /\b(die\s+in\s+a\s+fire)\b/i
-      ],
-
-      checkSafety(text) {
-        if (!text) return { isSafe: true };
-        for (const pattern of this.blockedPatterns) {
-          if (pattern.test(text)) {
-            return {
-              isSafe: false,
-              reason: "Message flagged for harmful content."
-            };
-          }
-        }
-        return { isSafe: true };
-      }
-    };
-
-    /**
-     * Main GhostChat App Controller
-     */
-    class GhostChatApp {
-      constructor() {
-        this.status = 'idle'; // 'idle' | 'waiting' | 'chatting' | 'disconnected'
-        this.peer = null;
-        this.conn = null;
-        this.isHost = false;
-        this.activeRoomId = null;
-        this.probeTimeout = null;
-
-        // Crypto State
-        this.localKeyPair = null;
-        this.remotePublicKeyBase64 = null;
-        this.sharedKey = null;
-        this.isHandshakeComplete = false;
-
-        // Voice Recording
-        this.mediaRecorder = null;
-        this.audioChunks = [];
-        this.isRecording = false;
-        this.recordingSeconds = 0;
-        this.recordingInterval = null;
-        this.sendRecordedAudio = true;
-
-        // Typing tracker
-        this.typingTimeout = null;
-
-        // Messages with 30s timers
-        this.messages = [];
-        this.MESSAGE_LIFETIME = 30; // seconds
-
-        // Public STUN configuration
-        this.iceConfig = {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun3.l.google.com:19302' },
-            { urls: 'stun:stun4.l.google.com:19302' }
-          ]
-        };
-
-        this.initEventListeners();
-        this.startDisappearingPruneLoop();
-        this.checkUrlForRoom();
-      }
-
-      initEventListeners() {
-        window.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            if (this.status === 'chatting' || this.status === 'waiting') {
-              this.disconnect();
-            } else if (this.status === 'disconnected' || this.status === 'idle') {
-              this.startMatchmaking();
-            }
-          }
-        });
-      }
-
-      checkUrlForRoom() {
-        const hash = window.location.hash.replace('#', '').trim();
-        const params = new URLSearchParams(window.location.search);
-        const roomCode = params.get('room') || (hash.startsWith('room-') ? hash.replace('room-', '') : null);
-
-        if (roomCode) {
-          setTimeout(() => {
-            document.getElementById('custom-room-input').value = roomCode;
-            this.joinCustomRoom(roomCode);
-          }, 300);
-        }
-      }
-
-      // UI updates
-      updateStatusDisplay() {
-        const dot = document.getElementById('status-dot');
-        const text = document.getElementById('status-text');
-        const idleScreen = document.getElementById('idle-screen');
-        const chatScreen = document.getElementById('chat-screen');
-        const waitingIndicator = document.getElementById('waiting-indicator');
-        const btnDisconnect = document.getElementById('btn-disconnect');
-        const btnDisconnectText = document.getElementById('btn-disconnect-text');
-        const btnDisconnectIcon = document.getElementById('btn-disconnect-icon');
-        const chatInput = document.getElementById('chat-input');
-        const btnSend = document.getElementById('btn-send');
-        const btnRecord = document.getElementById('btn-record');
-
-        if (this.status === 'idle') {
-          idleScreen.classList.remove('hidden');
-          chatScreen.classList.add('hidden');
-          dot.className = "w-2 h-2 rounded-full bg-slate-500";
-          text.textContent = "Offline";
-        } else {
-          idleScreen.classList.add('hidden');
-          chatScreen.classList.remove('hidden');
-
-          if (this.status === 'waiting') {
-            waitingIndicator.classList.remove('hidden');
-            waitingIndicator.classList.add('flex');
-            dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
-            text.textContent = "Finding Stranger...";
-            btnDisconnectText.textContent = "Stop";
-            btnDisconnect.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
-            btnDisconnectIcon.setAttribute('data-lucide', 'user-x');
-            chatInput.disabled = true;
-            chatInput.placeholder = "Looking for a stranger...";
-            btnSend.disabled = true;
-            btnRecord.classList.add('opacity-50', 'pointer-events-none');
-          } else if (this.status === 'chatting') {
-            waitingIndicator.classList.add('hidden');
-            waitingIndicator.classList.remove('flex');
-            
-            const isReady = !!this.sharedKey;
-            if (isReady) {
-              dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-              text.textContent = "Connected";
-              chatInput.disabled = false;
-              chatInput.placeholder = "Type a message... (Press Enter)";
-              btnSend.disabled = false;
-              btnRecord.classList.remove('opacity-50', 'pointer-events-none');
-              chatInput.focus();
-            } else {
-              dot.className = "w-2 h-2 rounded-full bg-indigo-400 animate-pulse";
-              text.textContent = "Connecting...";
-              chatInput.disabled = true;
-              chatInput.placeholder = "Connecting to stranger...";
-              btnSend.disabled = true;
-              btnRecord.classList.add('opacity-50', 'pointer-events-none');
-            }
-
-            btnDisconnectText.textContent = "Stop";
-            btnDisconnect.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
-            btnDisconnectIcon.setAttribute('data-lucide', 'user-x');
-          } else if (this.status === 'disconnected') {
-            waitingIndicator.classList.add('hidden');
-            waitingIndicator.classList.remove('flex');
-            dot.className = "w-2 h-2 rounded-full bg-rose-500";
-            text.textContent = "Disconnected";
-            btnDisconnectText.textContent = "Next";
-            btnDisconnect.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 shadow-lg shadow-indigo-600/20 cursor-pointer";
-            btnDisconnectIcon.setAttribute('data-lucide', 'refresh-cw');
-            chatInput.disabled = true;
-            chatInput.placeholder = "Chat disconnected. Click Next to find a stranger.";
-            btnSend.disabled = true;
-            btnRecord.classList.add('opacity-50', 'pointer-events-none');
-          }
-        }
-
-        lucide.createIcons();
-      }
-
-      // Matchmaking & Room Logic
-      startMatchmaking() {
-        this.cleanupCurrentConnection();
-        this.status = 'waiting';
-        this.messages = [];
-        this.renderAllMessages();
-        this.updateStatusDisplay();
-
-        const lobbySlot = (Math.floor(Date.now() / 60000) % 3) + 1;
-        const lobbyId = `ghostchat-v4-lobby-${lobbySlot}`;
-        this.activeRoomId = lobbyId;
-        this.connectOrHostRoom(lobbyId, "matchmaking");
-      }
-
-      createAndCopyShareLink() {
-        const randomCode = Math.random().toString(36).substring(2, 8);
-        const directUrl = `${window.location.origin}${window.location.pathname}#room-${randomCode}`;
-        navigator.clipboard.writeText(directUrl).then(() => {
-          const btnText = document.getElementById('share-link-text');
-          btnText.textContent = "Copied link! Join now...";
-          setTimeout(() => {
-            btnText.textContent = "Create & Copy Direct Chat Link";
-          }, 2500);
-          this.joinCustomRoom(randomCode);
-        }).catch(() => {
-          this.joinCustomRoom(randomCode);
-        });
-      }
-
-      copyCurrentRoomLink() {
-        if (!this.activeRoomId) return;
-        const code = this.activeRoomId.replace('ghostchat-room-', '').replace('ghostchat-v4-lobby-', 'lobby-');
-        const directUrl = `${window.location.origin}${window.location.pathname}#room-${code}`;
-        navigator.clipboard.writeText(directUrl).then(() => {
-          const textEl = document.getElementById('waiting-copy-text');
-          textEl.textContent = "Link Copied!";
-          setTimeout(() => {
-            textEl.textContent = "Copy Invite Link";
-          }, 2000);
-        });
-      }
-
-      joinCustomRoom(codeOverride) {
-        const input = document.getElementById('custom-room-input');
-        const code = (codeOverride || input.value || '').trim();
-        if (!code) return;
-
-        this.cleanupCurrentConnection();
-        this.status = 'waiting';
-        this.messages = [];
-        this.renderAllMessages();
-        this.updateStatusDisplay();
-
-        const cleanCode = code.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const roomId = `ghostchat-room-${cleanCode}`;
-        this.activeRoomId = roomId;
-        this.connectOrHostRoom(roomId, `room #${cleanCode}`);
-      }
-
-      connectOrHostRoom(roomId, displayName) {
-        document.getElementById('waiting-details').textContent = `Looking for partner in ${displayName}...`;
-
-        let testPeer = null;
-        let connected = false;
-
-        const cleanupTestPeer = () => {
-          clearTimeout(this.probeTimeout);
-          if (testPeer) {
-            try { testPeer.destroy(); } catch (e) {}
-            testPeer = null;
-          }
-        };
-
-        testPeer = new Peer({ config: this.iceConfig });
-
-        testPeer.on('open', () => {
-          if (connected) return;
-          const conn = testPeer.connect(roomId, { reliable: true });
-
-          conn.on('open', () => {
-            if (connected) return;
-            connected = true;
-            clearTimeout(this.probeTimeout);
-            this.peer = testPeer;
-            this.conn = conn;
-            this.isHost = false;
-            this.setupConnectionHandlers();
-          });
-
-          conn.on('error', () => {
-            if (connected) return;
-            connected = true;
-            cleanupTestPeer();
-            this.hostRoom(roomId, displayName);
-          });
-
-          this.probeTimeout = setTimeout(() => {
-            if (connected) return;
-            connected = true;
-            cleanupTestPeer();
-            this.hostRoom(roomId, displayName);
-          }, 2000);
-        });
-
-        testPeer.on('error', () => {
-          if (connected) return;
-          connected = true;
-          cleanupTestPeer();
-          this.hostRoom(roomId, displayName);
-        });
-      }
-
-      hostRoom(roomId, displayName) {
-        if (this.status !== 'waiting') return;
-        document.getElementById('waiting-details').textContent = `Waiting for someone to join ${displayName}...`;
-
-        const hostPeer = new Peer(roomId, { config: this.iceConfig });
-
-        hostPeer.on('open', () => {
-          this.peer = hostPeer;
-          this.isHost = true;
-
-          hostPeer.on('connection', (incomingConn) => {
-            if (this.conn) {
-              try {
-                incomingConn.send({ __protocol: 'GHOSTCHAT_MATCH', type: 'busy' });
-                incomingConn.close();
-              } catch (e) {}
-              return;
-            }
-            this.conn = incomingConn;
-            this.setupConnectionHandlers();
-          });
-        });
-
-        hostPeer.on('error', (err) => {
-          if (err.type === 'unavailable-id') {
-            setTimeout(() => {
-              this.connectAsClientDirect(roomId);
-            }, 400);
-          } else {
-            console.error("Host room error:", err);
-          }
-        });
-      }
-
-      connectAsClientDirect(roomId) {
-        if (this.status !== 'waiting') return;
-        const clientPeer = new Peer({ config: this.iceConfig });
-        clientPeer.on('open', () => {
-          const conn = clientPeer.connect(roomId, { reliable: true });
-          conn.on('open', () => {
-            this.peer = clientPeer;
-            this.conn = conn;
-            this.isHost = false;
-            this.setupConnectionHandlers();
-          });
-          conn.on('error', () => {
-            try { clientPeer.destroy(); } catch (e) {}
-            this.startMatchmaking();
-          });
-        });
-      }
-
-      async setupConnectionHandlers() {
-        clearTimeout(this.probeTimeout);
-        this.status = 'chatting';
-        this.isHandshakeComplete = false;
-        this.updateStatusDisplay();
-
-        this.addSystemMessage("You're now chatting with a random stranger. Say hi!");
-
-        try {
-          this.localKeyPair = await CryptoService.generateKeyPair();
-        } catch (err) {
-          console.error("Key generation error:", err);
-          return;
-        }
-
-        this.conn.on('data', async (payload) => {
-          if (!payload) return;
-
-          if (payload.__protocol === 'GHOSTCHAT_MATCH') {
-            if (payload.type === 'busy') {
-              this.handlePartnerDisconnected();
-            }
-            return;
-          }
-
-          if (payload.__protocol === 'GHOSTCHAT_E2EE') {
-            if (payload.type === 'public_key') {
-              this.remotePublicKeyBase64 = payload.publicKey;
-              await this.attemptKeyDerivation();
-            } else if (payload.type === 'typing') {
-              this.showPartnerTyping(payload.isTyping);
-            }
-            return;
-          }
-
-          if (payload.ciphertext && payload.iv) {
-            try {
-              if (!this.sharedKey) return;
-              const decrypted = await CryptoService.decryptData(this.sharedKey, payload.ciphertext, payload.iv);
-              this.showPartnerTyping(false);
-
-              if (decrypted.type === 'text') {
-                this.addMessage({
-                  id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-                  createdAt: Date.now(),
-                  type: 'text',
-                  text: decrypted.text,
-                  sender: 'stranger'
-                });
-              } else if (decrypted.type === 'audio') {
-                this.addMessage({
-                  id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-                  createdAt: Date.now(),
-                  type: 'audio',
-                  audioUrl: decrypted.audioBase64,
-                  sender: 'stranger'
-                });
-              }
-            } catch (err) {
-              console.error("Decryption failed:", err);
-            }
-          }
-        });
-
-        this.conn.on('close', () => {
-          this.handlePartnerDisconnected();
-        });
-
-        this.conn.on('error', (err) => {
-          console.warn("Connection error:", err);
-          this.handlePartnerDisconnected();
-        });
-
-        const sendLocalPublicKey = async () => {
-          try {
-            const pubKeyBase64 = await CryptoService.exportPublicKey(this.localKeyPair.publicKey);
-            if (this.conn && this.conn.open) {
-              this.conn.send({
-                __protocol: 'GHOSTCHAT_E2EE',
-                type: 'public_key',
-                publicKey: pubKeyBase64
-              });
-            }
-            await this.attemptKeyDerivation();
-          } catch (e) {
-            console.error("Public key export/send error:", e);
-          }
-        };
-
-        if (this.conn.open) {
-          sendLocalPublicKey();
-        } else {
-          this.conn.on('open', () => {
-            sendLocalPublicKey();
-          });
-        }
-      }
-
-      async attemptKeyDerivation() {
-        if (this.isHandshakeComplete || !this.localKeyPair || !this.remotePublicKeyBase64) return;
-        try {
-          const remotePubKey = await CryptoService.importPublicKey(this.remotePublicKeyBase64);
-          this.sharedKey = await CryptoService.deriveSharedKey(this.localKeyPair.privateKey, remotePubKey);
-          this.isHandshakeComplete = true;
-          this.updateStatusDisplay();
-        } catch (e) {
-          console.error("Key derivation failure:", e);
-        }
-      }
-
-      handlePartnerDisconnected() {
-        if (this.status !== 'chatting') return;
-        this.status = 'disconnected';
-        this.showPartnerTyping(false);
-        this.updateStatusDisplay();
-        this.addSystemMessage("Stranger has disconnected.");
-      }
-
-      toggleChat() {
-        if (this.status === 'chatting' || this.status === 'waiting') {
-          this.disconnect();
-        } else {
-          this.startMatchmaking();
-        }
-      }
-
-      disconnect() {
-        if (this.conn) {
-          try { this.conn.close(); } catch(e){}
-        }
-        if (this.peer) {
-          try { this.peer.destroy(); } catch(e){}
-        }
-        this.cleanupCurrentConnection();
-        this.status = 'disconnected';
-        this.updateStatusDisplay();
-        this.addSystemMessage("You have disconnected.");
-      }
-
-      cleanupCurrentConnection() {
-        clearTimeout(this.probeTimeout);
-        this.sharedKey = null;
-        this.localKeyPair = null;
-        this.remotePublicKeyBase64 = null;
-        this.isHandshakeComplete = false;
-        this.showPartnerTyping(false);
-        this.stopVoiceRecording(false);
-      }
-
-      // Messaging with Content Safety Guard
-      async handleSendMessage(e) {
-        e?.preventDefault();
-        const input = document.getElementById('chat-input');
-        const text = input.value.trim();
-        if (!text || this.status !== 'chatting' || !this.sharedKey || !this.conn || !this.conn.open) return;
-
-        // Content moderation safety check
-        const safety = SafetyModerator.checkSafety(text);
-        if (!safety.isSafe) {
-          alert(`Cannot send message: ${safety.reason}`);
-          return;
-        }
-
-        input.value = '';
-
-        try {
-          const encrypted = await CryptoService.encryptData(this.sharedKey, {
-            type: 'text',
-            text: text
-          });
-
-          this.conn.send(encrypted);
-
-          this.addMessage({
-            id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-            createdAt: Date.now(),
-            type: 'text',
-            text: text,
-            sender: 'you'
-          });
-
-          this.sendTypingSignal(false);
-        } catch (err) {
-          console.error("Send failed:", err);
-        }
-      }
-
-      handleTyping() {
-        if (this.status === 'chatting' && this.conn && this.conn.open) {
-          this.sendTypingSignal(true);
-          clearTimeout(this.typingTimeout);
-          this.typingTimeout = setTimeout(() => {
-            this.sendTypingSignal(false);
-          }, 1500);
-        }
-      }
-
-      sendTypingSignal(isTyping) {
-        if (this.conn && this.conn.open) {
-          try {
-            this.conn.send({
-              __protocol: 'GHOSTCHAT_E2EE',
-              type: 'typing',
-              isTyping: isTyping
-            });
-          } catch(e){}
-        }
-      }
-
-      showPartnerTyping(isTyping) {
-        const indicator = document.getElementById('typing-indicator');
-        if (isTyping && this.status === 'chatting') {
-          indicator.classList.remove('hidden');
-          indicator.classList.add('flex');
-        } else {
-          indicator.classList.add('hidden');
-          indicator.classList.remove('flex');
-        }
-        this.scrollToBottom();
-      }
-
-      // Voice Notes
-      async toggleVoiceRecording() {
-        if (this.status !== 'chatting' || !this.sharedKey) return;
-        if (this.isRecording) {
-          this.stopVoiceRecording(true);
-        } else {
-          await this.startVoiceRecording();
-        }
-      }
-
-      async startVoiceRecording() {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          
-          let mimeType = 'audio/webm;codecs=opus';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
-          }
-
-          this.mediaRecorder = new MediaRecorder(stream, { mimeType });
-          this.audioChunks = [];
-
-          this.mediaRecorder.ondataavailable = (e) => {
-            if (e.data && e.data.size > 0) {
-              this.audioChunks.push(e.data);
-            }
-          };
-
-          this.mediaRecorder.onstop = async () => {
-            if (!this.sendRecordedAudio || this.audioChunks.length === 0) {
-              stream.getTracks().forEach(t => t.stop());
-              return;
-            }
-
-            const audioBlob = new Blob(this.audioChunks, { type: mimeType });
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
-            reader.onloadend = async () => {
-              const base64Audio = reader.result;
-
-              try {
-                if (!this.sharedKey || !this.conn || !this.conn.open) return;
-                const encrypted = await CryptoService.encryptData(this.sharedKey, {
-                  type: 'audio',
-                  audioBase64: base64Audio
-                });
-
-                this.conn.send(encrypted);
-
-                this.addMessage({
-                  id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-                  createdAt: Date.now(),
-                  type: 'audio',
-                  audioUrl: base64Audio,
-                  sender: 'you'
-                });
-              } catch (e) {
-                console.error("Audio send failed:", e);
-              }
-            };
-
-            stream.getTracks().forEach(t => t.stop());
-          };
-
-          this.mediaRecorder.start();
-          this.isRecording = true;
-          this.sendRecordedAudio = true;
-          this.recordingSeconds = 0;
-
-          const recordIcon = document.getElementById('record-icon');
-          const recordLabel = document.getElementById('record-label');
-          const btnRecord = document.getElementById('btn-record');
-
-          btnRecord.classList.add('bg-rose-600', 'hover:bg-rose-500', 'recording-pulse');
-          recordIcon.setAttribute('data-lucide', 'square');
-          recordLabel.classList.remove('hidden');
-          recordLabel.textContent = "0s Send";
-          lucide.createIcons();
-
-          this.recordingInterval = setInterval(() => {
-            this.recordingSeconds++;
-            recordLabel.textContent = `${this.recordingSeconds}s Send`;
-          }, 1000);
-
-        } catch (err) {
-          console.error("Microphone access error:", err);
-          alert("Could not access microphone.");
-        }
-      }
-
-      stopVoiceRecording(sendAudio = true) {
-        if (!this.isRecording) return;
-        this.sendRecordedAudio = sendAudio;
-        clearInterval(this.recordingInterval);
-        this.isRecording = false;
-
-        const recordIcon = document.getElementById('record-icon');
-        const recordLabel = document.getElementById('record-label');
-        const btnRecord = document.getElementById('btn-record');
-
-        btnRecord.classList.remove('bg-rose-600', 'hover:bg-rose-500', 'recording-pulse');
-        recordIcon.setAttribute('data-lucide', 'mic');
-        recordLabel.classList.add('hidden');
-        lucide.createIcons();
-
-        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-          this.mediaRecorder.stop();
-        }
-      }
-
-      // Messages and 30s Disappearing loop
-      addSystemMessage(text) {
-        this.messages.push({
-          id: 'sys-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-          system: true,
-          text: text
-        });
-        this.appendMessageToDOM(this.messages[this.messages.length - 1]);
-        this.scrollToBottom();
-      }
-
-      addMessage(msgObj) {
-        this.messages.push(msgObj);
-        this.appendMessageToDOM(msgObj);
-        this.scrollToBottom();
-      }
-
-      appendMessageToDOM(m) {
-        const list = document.getElementById('messages-list');
-        if (!list) return;
-
-        if (m.system) {
-          const div = document.createElement('div');
-          div.id = m.id;
-          div.className = "flex justify-center my-2 text-center transition-all duration-300";
-          div.innerHTML = `<span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] text-slate-400 font-medium">${this.escapeHtml(m.text)}</span>`;
-          list.appendChild(div);
-          return;
-        }
-
-        const isMe = m.sender === 'you';
-        const wrapper = document.createElement('div');
-        wrapper.id = m.id;
-        wrapper.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} transition-all duration-300`;
-
-        let contentHtml = '';
-        if (m.type === 'audio') {
-          contentHtml = `
-            <div class="flex items-center gap-3 py-1">
-              <audio id="audio-${m.id}" src="${m.audioUrl}" onended="app.handleAudioEnded('${m.id}')" class="hidden"></audio>
-              <button
-                type="button"
-                onclick="app.togglePlayAudio('${m.id}')"
-                class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all cursor-pointer shrink-0"
-              >
-                <i id="audio-icon-${m.id}" data-lucide="play" class="w-4 h-4 ml-0.5"></i>
-              </button>
-              <div class="flex flex-col">
-                <span class="text-xs font-semibold">Voice Note</span>
-                <span class="text-[10px] opacity-75">Audio</span>
-              </div>
-            </div>
-          `;
-        } else {
-          contentHtml = `<p class="break-words text-sm leading-relaxed">${this.escapeHtml(m.text)}</p>`;
-        }
-
-        wrapper.innerHTML = `
-          <span class="text-[10px] font-semibold text-slate-500 mb-1 px-1">${isMe ? 'You' : 'Stranger'}</span>
-          <div class="max-w-[85%] sm:max-w-[70%] px-4 py-2.5 rounded-2xl ${
-            isMe
-              ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-600/10'
-              : 'bg-slate-800/90 text-slate-100 rounded-bl-none border border-slate-700/50'
-          }">
-            ${contentHtml}
-            <div class="flex items-center gap-1.5 mt-1.5 text-[10px] opacity-80">
-              <i data-lucide="clock" class="w-3 h-3 text-amber-400 shrink-0"></i>
-              <span id="timer-${m.id}" class="font-mono">30s</span>
-              <div class="w-12 h-1 bg-black/25 rounded-full overflow-hidden ml-1">
-                <div id="bar-${m.id}" class="h-full bg-amber-400 transition-all duration-1000" style="width: 100%;"></div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        list.appendChild(wrapper);
-        lucide.createIcons();
-      }
-
-      startDisappearingPruneLoop() {
-        setInterval(() => {
-          const now = Date.now();
-          const toRemove = [];
-
-          for (let i = 0; i < this.messages.length; i++) {
-            const m = this.messages[i];
-            if (m.system) continue;
-
-            const elapsed = Math.floor((now - m.createdAt) / 1000);
-            const remaining = Math.max(0, this.MESSAGE_LIFETIME - elapsed);
-
-            if (remaining <= 0) {
-              toRemove.push(m.id);
-            } else {
-              const timerEl = document.getElementById(`timer-${m.id}`);
-              const barEl = document.getElementById(`bar-${m.id}`);
-              if (timerEl) timerEl.textContent = `${remaining}s`;
-              if (barEl) barEl.style.width = `${(remaining / this.MESSAGE_LIFETIME) * 100}%`;
-            }
-          }
-
-          if (toRemove.length > 0) {
-            this.messages = this.messages.filter(m => !toRemove.includes(m.id));
-            toRemove.forEach(id => {
-              const el = document.getElementById(id);
-              if (el) {
-                el.style.opacity = '0';
-                el.style.transform = 'scale(0.95)';
-                setTimeout(() => el.remove(), 250);
-              }
-            });
-          }
-        }, 1000);
-      }
-
-      renderAllMessages() {
-        const list = document.getElementById('messages-list');
-        list.innerHTML = '';
-        this.messages.forEach(m => this.appendMessageToDOM(m));
-        this.scrollToBottom();
-      }
-
-      togglePlayAudio(id) {
-        const audio = document.getElementById(`audio-${id}`);
-        const icon = document.getElementById(`audio-icon-${id}`);
-        if (!audio) return;
-
-        if (audio.paused) {
-          audio.play().catch(e => console.warn("Audio play prevented:", e));
-          if (icon) {
-            icon.setAttribute('data-lucide', 'pause');
-            lucide.createIcons();
-          }
-        } else {
-          audio.pause();
-          if (icon) {
-            icon.setAttribute('data-lucide', 'play');
-            lucide.createIcons();
-          }
-        }
-      }
-
-      handleAudioEnded(id) {
-        const icon = document.getElementById(`audio-icon-${id}`);
-        if (icon) {
-          icon.setAttribute('data-lucide', 'play');
-          lucide.createIcons();
-        }
-      }
-
-      scrollToBottom() {
-        const anchor = document.getElementById('messages-anchor');
-        anchor?.scrollIntoView({ behavior: 'smooth' });
-      }
-
-      escapeHtml(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+    // Determine backend host (supports same origin or custom cloud server)
+    const socket = io();
+
+    // DOM Elements
+    const landingScreen = document.getElementById('landing-screen');
+    const chatScreen = document.getElementById('chat-screen');
+    const startBtn = document.getElementById('start-btn');
+    const disconnectBtn = document.getElementById('disconnect-btn');
+    const disconnectText = document.getElementById('disconnect-text');
+    const disconnectIcon = document.getElementById('disconnect-icon');
+    const sendBtn = document.getElementById('send-btn');
+    const msgInput = document.getElementById('msg-input');
+    const messagesBox = document.getElementById('messages-box');
+    const waitingSpinner = document.getElementById('waiting-spinner');
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusDot = document.getElementById('status-dot');
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    let isChatting = false;
+    let typingTimeout = null;
+
+    // Connect & Status
+    socket.on('connect', () => {
+      statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
+      statusIndicator.innerText = "Online";
+    });
+
+    socket.on('disconnect', () => {
+      statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
+      statusIndicator.innerText = "Offline";
+    });
+
+    // Start Button
+    startBtn.addEventListener('click', () => {
+      landingScreen.classList.add('hidden');
+      chatScreen.classList.remove('hidden');
+      clearMessages();
+      showWaiting(true);
+      socket.emit('find_partner');
+    });
+
+    // Send Message
+    function sendMessage() {
+      const text = msgInput.value.trim();
+      if (text && isChatting) {
+        appendMessage('you', text);
+        socket.emit('send_message', text);
+        msgInput.value = '';
+        socket.emit('typing', false);
       }
     }
 
-    // Launch App
-    const app = new GhostChatApp();
-    window.app = app;
+    sendBtn.addEventListener('click', sendMessage);
+
+    // Typing Event
+    msgInput.addEventListener('input', () => {
+      if (isChatting) {
+        socket.emit('typing', true);
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+          socket.emit('typing', false);
+        }, 1500);
+      }
+    });
+
+    socket.on('partner_typing', (isTyping) => {
+      if (isTyping && isChatting) {
+        typingIndicator.classList.remove('hidden');
+        typingIndicator.classList.add('flex');
+      } else {
+        typingIndicator.classList.add('hidden');
+        typingIndicator.classList.remove('flex');
+      }
+    });
+
+    // Stop / Next Action
+    disconnectBtn.addEventListener('click', () => {
+      if (isChatting || statusIndicator.innerText === 'Searching...') {
+        socket.emit('disconnect_chat');
+        handleChatReset('You disconnected.');
+      } else {
+        // Next stranger
+        clearMessages();
+        showWaiting(true);
+        socket.emit('find_partner');
+      }
+    });
+
+    // Keyboard shortcut Esc
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!chatScreen.classList.contains('hidden')) {
+          disconnectBtn.click();
+        } else {
+          startBtn.click();
+        }
+      }
+    });
+
+    // Socket Events (Blueprint implementation)
+    socket.on('waiting', (msg) => {
+      statusIndicator.innerText = 'Searching...';
+      statusDot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
+      showWaiting(true);
+      disconnectBtn.removeAttribute('disabled');
+      disconnectText.innerText = 'Stop';
+      disconnectIcon.setAttribute('data-lucide', 'user-x');
+      disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
+      lucide.createIcons();
+    });
+
+    socket.on('chat_start', () => {
+      isChatting = true;
+      showWaiting(false);
+      statusIndicator.innerText = 'Connected';
+      statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
+      appendSystemMessage("You're now chatting with a random stranger. Say hi!");
+
+      msgInput.removeAttribute('disabled');
+      msgInput.placeholder = "Type a message... (Press Enter to send)";
+      sendBtn.removeAttribute('disabled');
+      disconnectBtn.removeAttribute('disabled');
+      disconnectText.innerText = 'Stop';
+      disconnectIcon.setAttribute('data-lucide', 'user-x');
+      disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
+      msgInput.focus();
+      lucide.createIcons();
+    });
+
+    socket.on('receive_message', (msg) => {
+      appendMessage('stranger', msg);
+    });
+
+    socket.on('partner_disconnected', (msg) => {
+      handleChatReset(msg);
+    });
+
+    // Helper functions
+    function appendMessage(sender, text) {
+      const isMe = sender === 'you';
+      const wrapper = document.createElement('div');
+      wrapper.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} transition-all`;
+
+      wrapper.innerHTML = `
+        <span class="text-[10px] font-semibold text-slate-500 mb-1 px-1">${isMe ? 'You' : 'Stranger'}</span>
+        <div class="max-w-[85%] sm:max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+          isMe
+            ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-600/10'
+            : 'bg-slate-800/90 text-slate-100 rounded-bl-none border border-slate-700/50'
+        }">
+          <p class="break-words">${escapeHTML(text)}</p>
+        </div>
+      `;
+      messagesBox.appendChild(wrapper);
+      scrollToBottom();
+    }
+
+    function appendSystemMessage(text) {
+      const div = document.createElement('div');
+      div.className = "flex justify-center my-2 text-center";
+      div.innerHTML = `<span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] text-slate-400 font-medium">${escapeHTML(text)}</span>`;
+      messagesBox.appendChild(div);
+      scrollToBottom();
+    }
+
+    function handleChatReset(systemText) {
+      isChatting = false;
+      statusIndicator.innerText = 'Disconnected';
+      statusDot.className = "w-2 h-2 rounded-full bg-rose-500";
+      appendSystemMessage(systemText);
+      typingIndicator.classList.add('hidden');
+
+      msgInput.setAttribute('disabled', 'true');
+      msgInput.placeholder = "Chat disconnected. Click Next to find a stranger.";
+      sendBtn.setAttribute('disabled', 'true');
+
+      // Change button to Next
+      disconnectText.innerText = 'Next';
+      disconnectIcon.setAttribute('data-lucide', 'refresh-cw');
+      disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 shadow-lg shadow-indigo-600/20 cursor-pointer";
+      lucide.createIcons();
+    }
+
+    function showWaiting(show) {
+      if (show) {
+        waitingSpinner.classList.remove('hidden');
+        waitingSpinner.classList.add('flex');
+      } else {
+        waitingSpinner.classList.add('hidden');
+        waitingSpinner.classList.remove('flex');
+      }
+    }
+
+    function clearMessages() {
+      messagesBox.innerHTML = '';
+      messagesBox.appendChild(waitingSpinner);
+    }
+
+    function scrollToBottom() {
+      messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    lucide.createIcons();
   </script>
 </body>
 </html>
