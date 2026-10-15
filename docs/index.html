@@ -38,58 +38,59 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans h-screen w-screen overflow-hidden flex flex-col select-none">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased h-screen flex flex-col selection:bg-indigo-500 selection:text-white overflow-hidden">
 
   <!-- Top Header Navigation -->
-  <header class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-slate-900/70 backdrop-blur shrink-0 z-10">
+  <header class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-slate-900/60 backdrop-blur shrink-0 z-10">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
-        <i data-lucide="message-square" class="w-5 h-5 text-white"></i>
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <i data-lucide="ghost" class="w-5 h-5 text-white"></i>
       </div>
       <div>
-        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-          GhostChat
-          <span class="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold flex items-center gap-1">
-            <i data-lucide="lock" class="w-2.5 h-2.5"></i> E2EE
+        <div class="flex items-center gap-2">
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">GhostChat</h1>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1">
+            <i data-lucide="shield-check" class="w-3 h-3"></i> E2EE
           </span>
-          <span class="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">
+          <span class="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
             GitHub Pages Serverless
           </span>
-        </h1>
-        <p class="text-[11px] sm:text-xs text-slate-400">Anonymous • Ephemeral 30s • AES-256-GCM Direct P2P</p>
+        </div>
+        <p class="text-[11px] text-slate-400">Anonymous • Ephemeral 30s • AES-256-GCM Direct P2P</p>
       </div>
     </div>
 
-    <!-- Right status header badges -->
+    <!-- Status & Visual Safety Badges -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Safety Fingerprint Display Badge (Visible when connected) -->
-      <div id="safety-badge" class="hidden items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 transition-all">
+      <!-- Visual Safety Fingerprint badge (only visible during active chatting) -->
+      <div id="safety-badge" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400">
         <span id="safety-emojis" class="text-sm"></span>
-        <span id="safety-code" class="font-mono font-bold tracking-wider"></span>
+        <span id="safety-code" class="font-mono font-semibold"></span>
       </div>
 
-      <!-- Network / WebRTC Status Indicator -->
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-medium text-slate-300">
+      <!-- Online / Status Dot -->
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50 text-xs font-medium text-slate-300">
         <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-        <span id="status-text" class="hidden sm:inline text-slate-300">Offline</span>
+        <span id="status-text">Offline</span>
       </div>
     </div>
   </header>
 
-  <!-- Welcome / Idle Screen -->
-  <main id="idle-screen" class="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto overflow-y-auto">
-    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6 text-indigo-400 shadow-xl shadow-indigo-500/10 animate-pulse">
+  <!-- Idle Screen: Start / Join -->
+  <main id="idle-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center max-w-xl mx-auto overflow-y-auto">
+    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 text-indigo-400 shadow-xl shadow-indigo-500/10">
       <i data-lucide="shield" class="w-8 h-8 text-emerald-400"></i>
     </div>
     
-    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-      Encrypted & Ephemeral
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+      Anonymous & End-to-End Encrypted
     </h2>
-    <p class="mt-4 text-slate-400 text-sm leading-relaxed max-w-md">
-      Zero central logs, no private servers required. GhostChat operates entirely in your browser through <strong>GitHub Pages</strong> with direct <strong>WebRTC P2P Data Channels</strong> and military-grade <strong>AES-256-GCM</strong> encryption.
+    
+    <p class="mt-3 text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md">
+      Zero logs. Pure peer-to-peer WebRTC connection. Every message and voice note is encrypted directly on your device with <strong>AES-256-GCM</strong> and disappears forever after <strong>30 seconds</strong>.
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-8 max-w-md text-left text-xs text-slate-300">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full mt-6 max-w-md text-left text-xs text-slate-300">
       <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
         <i data-lucide="lock" class="w-4 h-4 text-emerald-400 shrink-0"></i>
         <span>ECDH Key Exchange + AES-GCM</span>
@@ -109,7 +110,7 @@
     </div>
 
     <!-- Matchmaking Controls -->
-    <div class="mt-8 flex flex-col items-center gap-3 w-full max-w-xs">
+    <div class="mt-6 flex flex-col items-center gap-3 w-full max-w-xs">
       <button
         id="btn-start"
         onclick="app.startMatchmaking()"
@@ -119,9 +120,18 @@
         <span>Find Random Stranger</span>
       </button>
 
-      <div class="flex items-center gap-2 w-full text-slate-500 text-xs my-1">
+      <!-- Instant 1-Click Shareable Link Button -->
+      <button
+        onclick="app.createAndCopyShareLink()"
+        class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow"
+      >
+        <i data-lucide="link" class="w-3.5 h-3.5 text-indigo-400"></i>
+        <span id="share-link-text">Create & Copy Direct Chat Link</span>
+      </button>
+
+      <div class="flex items-center gap-2 w-full text-slate-500 text-xs my-0.5">
         <div class="flex-1 h-px bg-slate-800"></div>
-        <span>or join with room code</span>
+        <span>or join with code</span>
         <div class="flex-1 h-px bg-slate-800"></div>
       </div>
 
@@ -129,20 +139,20 @@
         <input
           id="custom-room-input"
           type="text"
-          placeholder="Enter room ID..."
+          placeholder="Enter room code..."
           class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
           onkeydown="if(event.key==='Enter') app.joinCustomRoom()"
         />
         <button
           onclick="app.joinCustomRoom()"
-          class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold cursor-pointer transition-colors shadow-md shadow-indigo-600/20"
         >
           Join
         </button>
       </div>
     </div>
 
-    <p class="mt-6 text-[11px] text-slate-500">
+    <p class="mt-5 text-[11px] text-slate-500">
       Press <kbd class="px-1.5 py-0.5 bg-slate-900 border border-slate-800 rounded text-slate-400 font-mono text-[10px]">Esc</kbd> anytime to Stop or Find Next
     </p>
   </main>
@@ -159,13 +169,27 @@
       </span>
     </div>
 
-    <!-- Messages Container (Scrollable) -->
+    <!-- Chat Messages Scroll Container -->
     <div id="messages-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-      <!-- Waiting Spinner / Finding match -->
-      <div id="waiting-indicator" class="flex flex-col items-center justify-center h-full text-slate-400 gap-3 py-16">
+      
+      <!-- Waiting Spinner Indicator -->
+      <div id="waiting-indicator" class="hidden flex-col items-center justify-center h-full text-slate-400 gap-3 py-12">
         <div class="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        <p class="text-sm font-semibold text-slate-300">Searching for a stranger...</p>
-        <p id="waiting-details" class="text-xs text-slate-500">Probing secure WebRTC matchmaking slots...</p>
+        <p class="text-sm font-semibold text-slate-200">Searching for a stranger...</p>
+        <p id="waiting-details" class="text-xs text-slate-400 font-mono">Connecting to matchmaking lobby...</p>
+        
+        <!-- Quick copy current room link while waiting -->
+        <div id="waiting-share-box" class="mt-2 flex flex-col items-center gap-2">
+          <p class="text-[11px] text-slate-500">Want to chat with someone specific right now?</p>
+          <button
+            onclick="app.copyCurrentRoomLink()"
+            class="px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <i data-lucide="copy" class="w-3 h-3"></i>
+            <span id="waiting-copy-text">Copy Invite Link</span>
+          </button>
+        </div>
+
         <button
           onclick="app.disconnect()"
           class="mt-3 px-4 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-rose-400 border border-slate-800 cursor-pointer"
@@ -250,10 +274,7 @@
   <!-- Application Logic -->
   <script>
     /**
-     * GhostChat Cryptography Module (Web Crypto API)
-     * - ECDH P-256 for Ephemeral Key Exchange
-     * - AES-GCM 256-bit for Authenticated Encryption
-     * - SHA-256 for Visual Safety Fingerprint
+     * Web Crypto API Helper for ECDH (P-256) Key Agreement & AES-256-GCM
      */
     const CryptoService = {
       async generateKeyPair() {
@@ -265,8 +286,8 @@
       },
 
       async exportPublicKey(key) {
-        const raw = await window.crypto.subtle.exportKey("raw", key);
-        return this.arrayBufferToBase64(raw);
+        const exported = await window.crypto.subtle.exportKey("raw", key);
+        return this.arrayBufferToBase64(exported);
       },
 
       async importPublicKey(base64Str) {
@@ -294,11 +315,11 @@
         const rawKey = await window.crypto.subtle.exportKey("raw", sharedKey);
         const hashBuffer = await window.crypto.subtle.digest("SHA-256", rawKey);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
-        
-        const code = ((hashArray[0] << 24 | hashArray[1] << 16 | hashArray[2] << 8 | hashArray[3]) >>> 0) % 1000000;
-        const formattedCode = code.toString().padStart(6, '0');
-        
-        const emojis = ["🛡️", "⚡", "🔑", "🪐", "💎", "🌟", "🔥", "🚀", "🍀", "🌊", "🦊", "🔮", "🌈", "🧩"];
+
+        const codeNum = ((hashArray[0] << 24 | hashArray[1] << 16 | hashArray[2] << 8 | hashArray[3]) >>> 0) % 1000000;
+        const code = codeNum.toString().padStart(6, '0');
+
+        const emojis = ["🛡️", "⚡", "🔑", "🪐", "💎", "🌟", "🔥", "🚀", "🍀", "🌊", "🦊", "🔮", "🌈", "🧩", "🦄", "🎯"];
         const emojiStr = [
           emojis[hashArray[4] % emojis.length],
           emojis[hashArray[5] % emojis.length],
@@ -306,18 +327,18 @@
           emojis[hashArray[7] % emojis.length]
         ].join(' ');
 
-        return { code: formattedCode, emojis: emojiStr };
+        return { code, emojis: emojiStr };
       },
 
       async encryptData(sharedKey, data) {
         const iv = window.crypto.getRandomValues(new Uint8Array(12));
         const enc = new TextEncoder();
-        const encodedData = enc.encode(typeof data === 'string' ? data : JSON.stringify(data));
+        const encoded = enc.encode(typeof data === 'string' ? data : JSON.stringify(data));
 
         const cipherBuffer = await window.crypto.subtle.encrypt(
           { name: "AES-GCM", iv: iv },
           sharedKey,
-          encodedData
+          encoded
         );
 
         return {
@@ -374,10 +395,9 @@
         this.peer = null;
         this.conn = null;
         this.isHost = false;
-        this.currentSlot = 1;
+        this.activeRoomId = null;
         this.probeTimeout = null;
-        this.MAX_SLOTS = 12; // compact slot pool for fast matchmaking
-        
+
         // E2EE
         this.localKeyPair = null;
         this.remotePublicKeyBase64 = null;
@@ -413,6 +433,7 @@
 
         this.initEventListeners();
         this.startDisappearingPruneLoop();
+        this.checkUrlForRoom();
       }
 
       initEventListeners() {
@@ -425,6 +446,19 @@
             }
           }
         });
+      }
+
+      checkUrlForRoom() {
+        const hash = window.location.hash.replace('#', '').trim();
+        const params = new URLSearchParams(window.location.search);
+        const roomCode = params.get('room') || (hash.startsWith('room-') ? hash.replace('room-', '') : null);
+
+        if (roomCode) {
+          setTimeout(() => {
+            document.getElementById('custom-room-input').value = roomCode;
+            this.joinCustomRoom(roomCode);
+          }, 300);
+        }
       }
 
       // UI updates
@@ -453,6 +487,7 @@
 
           if (this.status === 'waiting') {
             waitingIndicator.classList.remove('hidden');
+            waitingIndicator.classList.add('flex');
             dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
             text.textContent = "Finding Stranger...";
             btnDisconnectText.textContent = "Stop";
@@ -465,8 +500,9 @@
             this.hideSafetyBadge();
           } else if (this.status === 'chatting') {
             waitingIndicator.classList.add('hidden');
-            const isReady = !!this.sharedKey;
+            waitingIndicator.classList.remove('flex');
             
+            const isReady = !!this.sharedKey;
             if (isReady) {
               dot.className = "w-2 h-2 rounded-full bg-emerald-400";
               text.textContent = "Connected (E2EE)";
@@ -489,6 +525,7 @@
             btnDisconnectIcon.setAttribute('data-lucide', 'user-x');
           } else if (this.status === 'disconnected') {
             waitingIndicator.classList.add('hidden');
+            waitingIndicator.classList.remove('flex');
             dot.className = "w-2 h-2 rounded-full bg-rose-500";
             text.textContent = "Disconnected";
             btnDisconnectText.textContent = "Next";
@@ -529,206 +566,126 @@
         }
       }
 
-      // Matchmaking Logic
-      async startMatchmaking() {
+      // Matchmaking & Room Logic
+      startMatchmaking() {
         this.cleanupCurrentConnection();
         this.status = 'waiting';
         this.messages = [];
         this.renderAllMessages();
         this.updateStatusDisplay();
 
-        // Start scanning from slot 1 for quick rendezvous
-        this.currentSlot = 1;
-        this.tryConnectSlot(this.currentSlot);
+        // 4 deterministic lobby channels for instant pairing without hopping
+        const lobbySlot = (Math.floor(Date.now() / 60000) % 3) + 1;
+        const lobbyId = `ghostchat-v3-public-lobby-${lobbySlot}`;
+        this.activeRoomId = lobbyId;
+        this.connectOrHostRoom(lobbyId, "random matchmaking");
       }
 
-      joinCustomRoom() {
-        const roomInput = document.getElementById('custom-room-input');
-        const code = roomInput.value.trim();
-        if (!code) return;
-        this.cleanupCurrentConnection();
-        this.status = 'waiting';
-        this.messages = [];
-        this.renderAllMessages();
-        this.updateStatusDisplay();
-
-        const slotId = `ghostchat-room-${code.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-        this.probeSpecificSlot(slotId);
-      }
-
-      probeSpecificSlot(slotId) {
-        const displayRoom = slotId.replace('ghostchat-room-', '');
-        document.getElementById('waiting-details').textContent = `Connecting to room #${displayRoom}...`;
-        
-        let probePeer = null;
-        let resolved = false;
-
-        const cleanupProbe = () => {
-          clearTimeout(this.probeTimeout);
-          if (probePeer) {
-            try { probePeer.destroy(); } catch (e) {}
-            probePeer = null;
-          }
-        };
-
-        probePeer = new Peer({ config: this.iceConfig });
-
-        probePeer.on('open', () => {
-          if (resolved) return;
-          const testConn = probePeer.connect(slotId, { reliable: true });
-
-          testConn.on('open', () => {
-            if (resolved) return;
-            resolved = true;
-            clearTimeout(this.probeTimeout);
-            this.peer = probePeer;
-            this.conn = testConn;
-            this.isHost = false;
-            this.setupConnectionHandlers();
-          });
-
-          testConn.on('error', (err) => {
-            if (resolved) return;
-            resolved = true;
-            cleanupProbe();
-            this.hostSpecificSlot(slotId);
-          });
-
-          this.probeTimeout = setTimeout(() => {
-            if (resolved) return;
-            resolved = true;
-            cleanupProbe();
-            this.hostSpecificSlot(slotId);
+      createAndCopyShareLink() {
+        const randomCode = Math.random().toString(36).substring(2, 8);
+        const directUrl = `${window.location.origin}${window.location.pathname}#room-${randomCode}`;
+        navigator.clipboard.writeText(directUrl).then(() => {
+          const btnText = document.getElementById('share-link-text');
+          btnText.textContent = "Copied link! Join now...";
+          setTimeout(() => {
+            btnText.textContent = "Create & Copy Direct Chat Link";
           }, 2500);
-        });
-
-        probePeer.on('error', (err) => {
-          if (resolved) return;
-          resolved = true;
-          cleanupProbe();
-          this.hostSpecificSlot(slotId);
+          this.joinCustomRoom(randomCode);
+        }).catch(() => {
+          this.joinCustomRoom(randomCode);
         });
       }
 
-      hostSpecificSlot(slotId) {
-        const displayRoom = slotId.replace('ghostchat-room-', '');
-        document.getElementById('waiting-details').textContent = `Waiting for someone to join room #${displayRoom}...`;
-        const hostPeer = new Peer(slotId, { config: this.iceConfig });
-        
-        hostPeer.on('open', () => {
-          this.peer = hostPeer;
-          this.isHost = true;
-          
-          hostPeer.on('connection', (incomingConn) => {
-            if (this.conn) {
-              incomingConn.close();
-              return;
-            }
-            this.conn = incomingConn;
-            this.setupConnectionHandlers();
-          });
-        });
-
-        hostPeer.on('error', (err) => {
-          if (err.type === 'unavailable-id') {
-            // Someone registered right before us, connect to them
-            setTimeout(() => this.probeSpecificSlot(slotId), 500);
-          } else {
-            console.error('Host error:', err);
-          }
+      copyCurrentRoomLink() {
+        if (!this.activeRoomId) return;
+        const code = this.activeRoomId.replace('ghostchat-room-', '').replace('ghostchat-v3-public-lobby-', 'lobby-');
+        const directUrl = `${window.location.origin}${window.location.pathname}#room-${code}`;
+        navigator.clipboard.writeText(directUrl).then(() => {
+          const textEl = document.getElementById('waiting-copy-text');
+          textEl.textContent = "Link Copied!";
+          setTimeout(() => {
+            textEl.textContent = "Copy Invite Link";
+          }, 2000);
         });
       }
 
-      tryConnectSlot(slotNum, retryAsClient = false) {
-        if (this.status !== 'waiting') return;
-        const slotId = `ghostchat-v2-slot-${slotNum}`;
-        document.getElementById('waiting-details').textContent = `Checking queue slot ${slotNum}...`;
+      joinCustomRoom(codeOverride) {
+        const input = document.getElementById('custom-room-input');
+        const code = (codeOverride || input.value || '').trim();
+        if (!code) return;
 
-        let probePeer = null;
-        let matched = false;
+        this.cleanupCurrentConnection();
+        this.status = 'waiting';
+        this.messages = [];
+        this.renderAllMessages();
+        this.updateStatusDisplay();
 
-        const nextSlot = () => {
-          if (matched) return;
-          matched = true;
+        const cleanCode = code.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const roomId = `ghostchat-room-${cleanCode}`;
+        this.activeRoomId = roomId;
+        this.connectOrHostRoom(roomId, `room #${cleanCode}`);
+      }
+
+      connectOrHostRoom(roomId, displayName) {
+        document.getElementById('waiting-details').textContent = `Looking for partner in ${displayName}...`;
+
+        let testPeer = null;
+        let connected = false;
+
+        const cleanupTestPeer = () => {
           clearTimeout(this.probeTimeout);
-          if (probePeer) {
-            try { probePeer.destroy(); } catch (e) {}
-            probePeer = null;
-          }
-          if (this.status === 'waiting') {
-            const next = (slotNum % this.MAX_SLOTS) + 1;
-            this.tryConnectSlot(next);
+          if (testPeer) {
+            try { testPeer.destroy(); } catch (e) {}
+            testPeer = null;
           }
         };
 
-        const tryHostThisSlot = () => {
-          if (matched) return;
-          matched = true;
-          clearTimeout(this.probeTimeout);
-          if (probePeer) {
-            try { probePeer.destroy(); } catch (e) {}
-            probePeer = null;
-          }
-          if (this.status === 'waiting') {
-            this.tryHostSlot(slotNum);
-          }
-        };
+        // Step 1: Probe as client to see if host already exists
+        testPeer = new Peer({ config: this.iceConfig });
 
-        probePeer = new Peer({ config: this.iceConfig });
+        testPeer.on('open', () => {
+          if (connected) return;
+          const conn = testPeer.connect(roomId, { reliable: true });
 
-        probePeer.on('open', () => {
-          if (matched) return;
-          const testConn = probePeer.connect(slotId, { reliable: true });
-
-          testConn.on('open', () => {
-            if (matched) return;
-            matched = true;
+          conn.on('open', () => {
+            if (connected) return;
+            connected = true;
             clearTimeout(this.probeTimeout);
-            this.peer = probePeer;
-            this.conn = testConn;
+            this.peer = testPeer;
+            this.conn = conn;
             this.isHost = false;
             this.setupConnectionHandlers();
           });
 
-          testConn.on('close', () => {
-            // If connection closed quickly (e.g. host is busy), advance
-            if (!this.sharedKey && this.status === 'waiting') {
-              nextSlot();
-            }
+          conn.on('error', (err) => {
+            if (connected) return;
+            connected = true;
+            cleanupTestPeer();
+            this.hostRoom(roomId, displayName);
           });
 
-          testConn.on('error', () => {
-            if (retryAsClient) {
-              nextSlot();
-            } else {
-              tryHostThisSlot();
-            }
-          });
-
+          // If probe doesn't connect in 2 seconds, become the host
           this.probeTimeout = setTimeout(() => {
-            if (retryAsClient) {
-              nextSlot();
-            } else {
-              tryHostThisSlot();
-            }
-          }, 1800);
+            if (connected) return;
+            connected = true;
+            cleanupTestPeer();
+            this.hostRoom(roomId, displayName);
+          }, 2000);
         });
 
-        probePeer.on('error', (err) => {
-          if (retryAsClient) {
-            nextSlot();
-          } else {
-            tryHostThisSlot();
-          }
+        testPeer.on('error', (err) => {
+          if (connected) return;
+          connected = true;
+          cleanupTestPeer();
+          this.hostRoom(roomId, displayName);
         });
       }
 
-      tryHostSlot(slotNum) {
+      hostRoom(roomId, displayName) {
         if (this.status !== 'waiting') return;
-        const slotId = `ghostchat-v2-slot-${slotNum}`;
-        document.getElementById('waiting-details').textContent = `Waiting for stranger in slot ${slotNum}...`;
+        document.getElementById('waiting-details').textContent = `Waiting for someone to join ${displayName}...`;
 
-        const hostPeer = new Peer(slotId, { config: this.iceConfig });
+        const hostPeer = new Peer(roomId, { config: this.iceConfig });
 
         hostPeer.on('open', () => {
           this.peer = hostPeer;
@@ -736,36 +693,44 @@
 
           hostPeer.on('connection', (incomingConn) => {
             if (this.conn) {
-              // Already connected to someone, inform caller
               try {
                 incomingConn.send({ __protocol: 'GHOSTCHAT_MATCH', type: 'busy' });
                 incomingConn.close();
-              } catch(e) {}
+              } catch (e) {}
               return;
             }
             this.conn = incomingConn;
             this.setupConnectionHandlers();
           });
-
-          // Wait 6 seconds in this slot; if no one joins, try next slot
-          this.probeTimeout = setTimeout(() => {
-            if (this.status === 'waiting' && !this.conn) {
-              try { hostPeer.destroy(); } catch (e) {}
-              const nextSlot = (slotNum % this.MAX_SLOTS) + 1;
-              this.tryConnectSlot(nextSlot);
-            }
-          }, 6000);
         });
 
         hostPeer.on('error', (err) => {
-          try { hostPeer.destroy(); } catch (e) {}
           if (err.type === 'unavailable-id') {
-            // Someone is already hosting this slot! Connect to them immediately!
-            this.tryConnectSlot(slotNum, true /* retryAsClient */);
+            // Someone claimed the host ID right as we tried, connect as client
+            setTimeout(() => {
+              this.connectAsClientDirect(roomId);
+            }, 400);
           } else {
-            const nextSlot = (slotNum % this.MAX_SLOTS) + 1;
-            setTimeout(() => this.tryConnectSlot(nextSlot), 800);
+            console.error("Host room error:", err);
           }
+        });
+      }
+
+      connectAsClientDirect(roomId) {
+        if (this.status !== 'waiting') return;
+        const clientPeer = new Peer({ config: this.iceConfig });
+        clientPeer.on('open', () => {
+          const conn = clientPeer.connect(roomId, { reliable: true });
+          conn.on('open', () => {
+            this.peer = clientPeer;
+            this.conn = conn;
+            this.isHost = false;
+            this.setupConnectionHandlers();
+          });
+          conn.on('error', () => {
+            try { clientPeer.destroy(); } catch (e) {}
+            this.startMatchmaking();
+          });
         });
       }
 
@@ -775,7 +740,7 @@
         this.isHandshakeComplete = false;
         this.updateStatusDisplay();
 
-        this.addSystemMessage("Connected to a stranger! Negotiating End-to-End Encryption...");
+        this.addSystemMessage("Connected to partner! Negotiating End-to-End Encryption...");
 
         // Generate local ECDH keys immediately
         try {
@@ -859,7 +824,6 @@
                 publicKey: pubKeyBase64
               });
             }
-            // Check if remote key was already received
             await this.attemptKeyDerivation();
           } catch (e) {
             console.error("Public key export/send error:", e);
@@ -997,78 +961,80 @@
         this.scrollToBottom();
       }
 
-      // Voice Notes
+      // Voice Notes (Audio Recording)
       async toggleVoiceRecording() {
+        if (this.status !== 'chatting' || !this.sharedKey) return;
         if (this.isRecording) {
           this.stopVoiceRecording(true);
         } else {
-          this.startVoiceRecording();
+          await this.startVoiceRecording();
         }
       }
 
       async startVoiceRecording() {
-        if (this.status !== 'chatting' || !this.sharedKey) return;
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           
-          // Support multiple audio mime types across Chrome, Firefox, and Safari
-          const mimeType = (typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))
-            ? 'audio/webm;codecs=opus'
-            : ((typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/webm'))
-              ? 'audio/webm'
-              : ((typeof MediaRecorder.isTypeSupported === 'function' && MediaRecorder.isTypeSupported('audio/mp4'))
-                ? 'audio/mp4'
-                : ''));
+          let mimeType = 'audio/webm;codecs=opus';
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+          }
 
-          this.mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+          this.mediaRecorder = new MediaRecorder(stream, { mimeType });
           this.audioChunks = [];
 
           this.mediaRecorder.ondataavailable = (e) => {
-            if (e.data && e.data.size > 0) this.audioChunks.push(e.data);
+            if (e.data && e.data.size > 0) {
+              this.audioChunks.push(e.data);
+            }
           };
 
           this.mediaRecorder.onstop = async () => {
-            if (!this.sendRecordedAudio || this.audioChunks.length === 0) return;
-            const finalMime = this.mediaRecorder.mimeType || mimeType || 'audio/webm';
-            const audioBlob = new Blob(this.audioChunks, { type: finalMime });
+            if (!this.sendRecordedAudio || this.audioChunks.length === 0) {
+              stream.getTracks().forEach(t => t.stop());
+              return;
+            }
+
+            const audioBlob = new Blob(this.audioChunks, { type: mimeType });
             const reader = new FileReader();
             reader.readAsDataURL(audioBlob);
             reader.onloadend = async () => {
               const base64Audio = reader.result;
+
               try {
+                if (!this.sharedKey || !this.conn || !this.conn.open) return;
                 const encrypted = await CryptoService.encryptData(this.sharedKey, {
                   type: 'audio',
                   audioBase64: base64Audio
                 });
 
-                if (this.conn && this.conn.open) {
-                  this.conn.send(encrypted);
-                  this.addMessage({
-                    id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-                    createdAt: Date.now(),
-                    type: 'audio',
-                    audioUrl: base64Audio,
-                    sender: 'you'
-                  });
-                }
-              } catch (err) {
-                console.error("Audio encryption failed:", err);
+                this.conn.send(encrypted);
+
+                this.addMessage({
+                  id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+                  createdAt: Date.now(),
+                  type: 'audio',
+                  audioUrl: base64Audio,
+                  sender: 'you'
+                });
+              } catch (e) {
+                console.error("Audio encryption failed:", e);
               }
             };
 
-            stream.getTracks().forEach(track => track.stop());
+            stream.getTracks().forEach(t => t.stop());
           };
 
-          this.mediaRecorder.start(250); // timeslice 250ms
+          this.mediaRecorder.start();
           this.isRecording = true;
-          this.recordingSeconds = 0;
           this.sendRecordedAudio = true;
+          this.recordingSeconds = 0;
 
-          const recordBtn = document.getElementById('btn-record');
           const recordIcon = document.getElementById('record-icon');
           const recordLabel = document.getElementById('record-label');
+          const btnRecord = document.getElementById('btn-record');
 
-          recordBtn.className = "px-3 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center gap-1.5 recording-pulse shrink-0 cursor-pointer";
+          btnRecord.classList.add('bg-rose-600', 'hover:bg-rose-500', 'recording-pulse');
           recordIcon.setAttribute('data-lucide', 'square');
           recordLabel.classList.remove('hidden');
           recordLabel.textContent = "0s Send";
@@ -1080,122 +1046,108 @@
           }, 1000);
 
         } catch (err) {
-          console.error("Microphone error:", err);
-          alert("Could not access microphone for voice message. Please allow microphone permissions.");
+          console.error("Microphone access error:", err);
+          alert("Could not access microphone. Please check browser microphone permissions.");
         }
       }
 
-      stopVoiceRecording(shouldSend = true) {
+      stopVoiceRecording(sendAudio = true) {
         if (!this.isRecording) return;
-        this.sendRecordedAudio = shouldSend;
+        this.sendRecordedAudio = sendAudio;
         clearInterval(this.recordingInterval);
         this.isRecording = false;
 
-        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-          try { this.mediaRecorder.stop(); } catch(e){}
-        }
-
-        const recordBtn = document.getElementById('btn-record');
         const recordIcon = document.getElementById('record-icon');
         const recordLabel = document.getElementById('record-label');
+        const btnRecord = document.getElementById('btn-record');
 
-        recordBtn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors shrink-0 cursor-pointer";
+        btnRecord.classList.remove('bg-rose-600', 'hover:bg-rose-500', 'recording-pulse');
         recordIcon.setAttribute('data-lucide', 'mic');
         recordLabel.classList.add('hidden');
         lucide.createIcons();
+
+        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+          this.mediaRecorder.stop();
+        }
       }
 
-      // Message Rendering & 30-Second Disappearing
-      addMessage(msg) {
-        this.messages.push(msg);
-        this.appendMessageToDOM(msg);
-        this.scrollToBottom();
-      }
-
+      // Messages and 30-second countdown rendering
       addSystemMessage(text) {
-        const msg = {
+        this.messages.push({
           id: 'sys-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
           system: true,
           text: text
-        };
-        this.messages.push(msg);
-        this.appendMessageToDOM(msg);
+        });
+        this.appendMessageToDOM(this.messages[this.messages.length - 1]);
+        this.scrollToBottom();
+      }
+
+      addMessage(msgObj) {
+        this.messages.push(msgObj);
+        this.appendMessageToDOM(msgObj);
         this.scrollToBottom();
       }
 
       appendMessageToDOM(m) {
         const list = document.getElementById('messages-list');
-        const temp = document.createElement('div');
-        temp.innerHTML = this.buildMessageHTML(m).trim();
-        const el = temp.firstElementChild;
-        if (el) {
-          list.appendChild(el);
-          lucide.createIcons();
-        }
-      }
+        if (!list) return;
 
-      buildMessageHTML(m) {
         if (m.system) {
-          return `
-            <div id="${m.id}" class="flex justify-center my-2 transition-opacity duration-300">
-              <span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-400 font-medium text-center">
-                ${this.escapeHtml(m.text)}
-              </span>
-            </div>
-          `;
+          const div = document.createElement('div');
+          div.id = m.id;
+          div.className = "flex justify-center my-2 text-center transition-all duration-300";
+          div.innerHTML = `<span class="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] text-slate-400 font-medium">${this.escapeHtml(m.text)}</span>`;
+          list.appendChild(div);
+          return;
         }
 
         const isMe = m.sender === 'you';
-        const now = Date.now();
-        const elapsed = Math.floor((now - m.createdAt) / 1000);
-        const remaining = Math.max(0, this.MESSAGE_LIFETIME - elapsed);
-        const progress = Math.max(0, Math.min(100, (remaining / this.MESSAGE_LIFETIME) * 100));
+        const wrapper = document.createElement('div');
+        wrapper.id = m.id;
+        wrapper.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} transition-all duration-300`;
 
-        let bodyContent = '';
+        let contentHtml = '';
         if (m.type === 'audio') {
-          bodyContent = `
+          contentHtml = `
             <div class="flex items-center gap-3 py-1">
               <audio id="audio-${m.id}" src="${m.audioUrl}" onended="app.handleAudioEnded('${m.id}')" class="hidden"></audio>
               <button
                 type="button"
                 onclick="app.togglePlayAudio('${m.id}')"
-                id="audio-btn-${m.id}"
                 class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all cursor-pointer shrink-0"
               >
                 <i id="audio-icon-${m.id}" data-lucide="play" class="w-4 h-4 ml-0.5"></i>
               </button>
               <div class="flex flex-col">
                 <span class="text-xs font-semibold">Voice Note</span>
-                <span class="text-[10px] opacity-75">Encrypted audio</span>
+                <span class="text-[10px] opacity-75">Encrypted WebM / Opus</span>
               </div>
             </div>
           `;
         } else {
-          bodyContent = `<p class="break-words leading-relaxed">${this.escapeHtml(m.text)}</p>`;
+          contentHtml = `<p class="break-words text-sm leading-relaxed">${this.escapeHtml(m.text)}</p>`;
         }
 
-        return `
-          <div id="${m.id}" class="flex flex-col ${isMe ? 'items-end' : 'items-start'} transition-all duration-300">
-            <span class="text-[11px] font-semibold text-slate-500 mb-1 px-1">
-              ${isMe ? 'You' : 'Stranger'}
-            </span>
-            <div class="max-w-[85%] sm:max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-              isMe
-                ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-600/10'
-                : 'bg-slate-800/90 text-slate-100 rounded-bl-none border border-slate-700/50'
-            }">
-              ${bodyContent}
-              <!-- 30-Second Disappearing Indicator Bar -->
-              <div class="flex items-center gap-1.5 mt-1.5 text-[10px] opacity-80">
-                <i data-lucide="clock" class="w-3 h-3 text-amber-400"></i>
-                <span id="timer-${m.id}">${remaining}s</span>
-                <div class="w-12 h-1 bg-black/30 rounded-full overflow-hidden ml-1">
-                  <div id="bar-${m.id}" class="h-full bg-amber-400 transition-all duration-1000" style="width: ${progress}%"></div>
-                </div>
+        wrapper.innerHTML = `
+          <span class="text-[10px] font-semibold text-slate-500 mb-1 px-1">${isMe ? 'You' : 'Stranger'}</span>
+          <div class="max-w-[85%] sm:max-w-[70%] px-4 py-2.5 rounded-2xl ${
+            isMe
+              ? 'bg-indigo-600 text-white rounded-br-none shadow-md shadow-indigo-600/10'
+              : 'bg-slate-800/90 text-slate-100 rounded-bl-none border border-slate-700/50'
+          }">
+            ${contentHtml}
+            <div class="flex items-center gap-1.5 mt-1.5 text-[10px] opacity-80">
+              <i data-lucide="clock" class="w-3 h-3 text-amber-400 shrink-0"></i>
+              <span id="timer-${m.id}" class="font-mono">30s</span>
+              <div class="w-12 h-1 bg-black/25 rounded-full overflow-hidden ml-1">
+                <div id="bar-${m.id}" class="h-full bg-amber-400 transition-all duration-1000" style="width: 100%;"></div>
               </div>
             </div>
           </div>
         `;
+
+        list.appendChild(wrapper);
+        lucide.createIcons();
       }
 
       startDisappearingPruneLoop() {
@@ -1213,7 +1165,6 @@
             if (remaining <= 0) {
               toRemove.push(m.id);
             } else {
-              // Update live timer and progress bar in-place without touching audio or DOM tree
               const timerEl = document.getElementById(`timer-${m.id}`);
               const barEl = document.getElementById(`bar-${m.id}`);
               if (timerEl) timerEl.textContent = `${remaining}s`;
