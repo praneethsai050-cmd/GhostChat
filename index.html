@@ -11,7 +11,7 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- Socket.io client -->
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
 
   <style>
     ::-webkit-scrollbar { width: 6px; }
@@ -42,7 +42,7 @@
     <!-- Online Status Indicator -->
     <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50 text-xs font-medium text-slate-300">
       <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-      <span id="status-indicator">Offline</span>
+      <span id="status-indicator">Connecting...</span>
     </div>
   </header>
 
@@ -63,6 +63,7 @@
     <div class="mt-8 flex flex-col items-center gap-3 w-full max-w-xs">
       <button
         id="start-btn"
+        onclick="startChat()"
         class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-semibold text-sm shadow-xl shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
       >
         <i data-lucide="sparkles" class="w-4 h-4"></i>
@@ -106,6 +107,7 @@
         <button
           id="disconnect-btn"
           type="button"
+          onclick="toggleDisconnect()"
           class="px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer"
           title="Stop or Find Next (Esc)"
         >
@@ -142,8 +144,13 @@
   </main>
 
   <script>
-    // Determine backend host (supports same origin or custom cloud server)
-    const socket = io();
+    // Initialize socket
+    let socket = null;
+    try {
+      socket = io();
+    } catch(err) {
+      console.warn("Socket.io direct failed, attempting fallback:", err);
+    }
 
     // DOM Elements
     const landingScreen = document.getElementById('landing-screen');
@@ -163,30 +170,80 @@
     let isChatting = false;
     let typingTimeout = null;
 
-    // Connect & Status
-    socket.on('connect', () => {
-      statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
-      statusIndicator.innerText = "Online";
-    });
+    if (socket) {
+      socket.on('connect', () => {
+        statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
+        statusIndicator.innerText = "Online";
+      });
 
-    socket.on('disconnect', () => {
-      statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
-      statusIndicator.innerText = "Offline";
-    });
+      socket.on('disconnect', () => {
+        statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
+        statusIndicator.innerText = "Offline";
+      });
 
-    // Start Button
-    startBtn.addEventListener('click', () => {
+      socket.on('waiting', (msg) => {
+        statusIndicator.innerText = 'Searching...';
+        statusDot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
+        showWaiting(true);
+        disconnectBtn.removeAttribute('disabled');
+        disconnectText.innerText = 'Stop';
+        disconnectIcon.setAttribute('data-lucide', 'user-x');
+        disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
+        lucide.createIcons();
+      });
+
+      socket.on('chat_start', () => {
+        isChatting = true;
+        showWaiting(false);
+        statusIndicator.innerText = 'Connected';
+        statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
+        appendSystemMessage("You're now chatting with a random stranger. Say hi!");
+
+        msgInput.removeAttribute('disabled');
+        msgInput.placeholder = "Type a message... (Press Enter to send)";
+        sendBtn.removeAttribute('disabled');
+        disconnectBtn.removeAttribute('disabled');
+        disconnectText.innerText = 'Stop';
+        disconnectIcon.setAttribute('data-lucide', 'user-x');
+        disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
+        msgInput.focus();
+        lucide.createIcons();
+      });
+
+      socket.on('receive_message', (msg) => {
+        appendMessage('stranger', msg);
+      });
+
+      socket.on('partner_disconnected', (msg) => {
+        handleChatReset(msg);
+      });
+
+      socket.on('partner_typing', (isTyping) => {
+        if (isTyping && isChatting) {
+          typingIndicator.classList.remove('hidden');
+          typingIndicator.classList.add('flex');
+        } else {
+          typingIndicator.classList.add('hidden');
+          typingIndicator.classList.remove('flex');
+        }
+      });
+    }
+
+    // Explicit function for Start button
+    function startChat() {
       landingScreen.classList.add('hidden');
       chatScreen.classList.remove('hidden');
       clearMessages();
       showWaiting(true);
-      socket.emit('find_partner');
-    });
+      if (socket) {
+        socket.emit('find_partner');
+      }
+    }
 
     // Send Message
     function sendMessage() {
       const text = msgInput.value.trim();
-      if (text && isChatting) {
+      if (text && isChatting && socket) {
         appendMessage('you', text);
         socket.emit('send_message', text);
         msgInput.value = '';
@@ -194,11 +251,9 @@
       }
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-
     // Typing Event
     msgInput.addEventListener('input', () => {
-      if (isChatting) {
+      if (isChatting && socket) {
         socket.emit('typing', true);
         clearTimeout(typingTimeout);
         typingTimeout = setTimeout(() => {
@@ -207,79 +262,29 @@
       }
     });
 
-    socket.on('partner_typing', (isTyping) => {
-      if (isTyping && isChatting) {
-        typingIndicator.classList.remove('hidden');
-        typingIndicator.classList.add('flex');
-      } else {
-        typingIndicator.classList.add('hidden');
-        typingIndicator.classList.remove('flex');
-      }
-    });
-
-    // Stop / Next Action
-    disconnectBtn.addEventListener('click', () => {
+    // Disconnect / Next toggle
+    function toggleDisconnect() {
       if (isChatting || statusIndicator.innerText === 'Searching...') {
-        socket.emit('disconnect_chat');
+        if (socket) socket.emit('disconnect_chat');
         handleChatReset('You disconnected.');
       } else {
-        // Next stranger
         clearMessages();
         showWaiting(true);
-        socket.emit('find_partner');
+        if (socket) socket.emit('find_partner');
       }
-    });
+    }
 
     // Keyboard shortcut Esc
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         if (!chatScreen.classList.contains('hidden')) {
-          disconnectBtn.click();
+          toggleDisconnect();
         } else {
-          startBtn.click();
+          startChat();
         }
       }
     });
 
-    // Socket Events (Blueprint implementation)
-    socket.on('waiting', (msg) => {
-      statusIndicator.innerText = 'Searching...';
-      statusDot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
-      showWaiting(true);
-      disconnectBtn.removeAttribute('disabled');
-      disconnectText.innerText = 'Stop';
-      disconnectIcon.setAttribute('data-lucide', 'user-x');
-      disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
-      lucide.createIcons();
-    });
-
-    socket.on('chat_start', () => {
-      isChatting = true;
-      showWaiting(false);
-      statusIndicator.innerText = 'Connected';
-      statusDot.className = "w-2 h-2 rounded-full bg-emerald-400";
-      appendSystemMessage("You're now chatting with a random stranger. Say hi!");
-
-      msgInput.removeAttribute('disabled');
-      msgInput.placeholder = "Type a message... (Press Enter to send)";
-      sendBtn.removeAttribute('disabled');
-      disconnectBtn.removeAttribute('disabled');
-      disconnectText.innerText = 'Stop';
-      disconnectIcon.setAttribute('data-lucide', 'user-x');
-      disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer";
-      msgInput.focus();
-      lucide.createIcons();
-    });
-
-    socket.on('receive_message', (msg) => {
-      appendMessage('stranger', msg);
-    });
-
-    socket.on('partner_disconnected', (msg) => {
-      handleChatReset(msg);
-    });
-
-    // Helper functions
     function appendMessage(sender, text) {
       const isMe = sender === 'you';
       const wrapper = document.createElement('div');
@@ -318,7 +323,6 @@
       msgInput.placeholder = "Chat disconnected. Click Next to find a stranger.";
       sendBtn.setAttribute('disabled', 'true');
 
-      // Change button to Next
       disconnectText.innerText = 'Next';
       disconnectIcon.setAttribute('data-lucide', 'refresh-cw');
       disconnectBtn.className = "px-3.5 sm:px-4 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-500 text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 shadow-lg shadow-indigo-600/20 cursor-pointer";
