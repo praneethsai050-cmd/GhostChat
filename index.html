@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GhostChat — Anonymous End-to-End Encrypted Ephemeral Chat</title>
+  <title>GhostChat — Talk to Strangers</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👻</text></svg>">
   
   <!-- Tailwind CSS CDN -->
@@ -49,26 +49,16 @@
       <div>
         <div class="flex items-center gap-2">
           <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">GhostChat</h1>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium flex items-center gap-1">
-            <i data-lucide="shield-check" class="w-3 h-3"></i> E2EE
-          </span>
-          <span class="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            GitHub Pages Serverless
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+            Live
           </span>
         </div>
-        <p class="text-[11px] text-slate-400">Anonymous • Ephemeral 30s • AES-256-GCM Direct P2P</p>
+        <p class="text-[11px] text-slate-400">Talk to random strangers 1-on-1</p>
       </div>
     </div>
 
-    <!-- Status & Visual Safety Badges -->
+    <!-- Status Badge -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Visual Safety Fingerprint badge (only visible during active chatting) -->
-      <div id="safety-badge" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400">
-        <span id="safety-emojis" class="text-sm"></span>
-        <span id="safety-code" class="font-mono font-semibold"></span>
-      </div>
-
-      <!-- Online / Status Dot -->
       <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/50 text-xs font-medium text-slate-300">
         <span id="status-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
         <span id="status-text">Offline</span>
@@ -76,48 +66,29 @@
     </div>
   </header>
 
-  <!-- Idle Screen: Start / Join -->
+  <!-- Clean Minimal Landing Screen -->
   <main id="idle-screen" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center max-w-xl mx-auto overflow-y-auto">
     <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-5 text-indigo-400 shadow-xl shadow-indigo-500/10">
-      <i data-lucide="shield" class="w-8 h-8 text-emerald-400"></i>
+      <i data-lucide="message-square" class="w-8 h-8 text-indigo-400"></i>
     </div>
     
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-      Anonymous & End-to-End Encrypted
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+      Talk to Strangers
     </h2>
     
-    <p class="mt-3 text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md">
-      Zero logs. Pure peer-to-peer WebRTC connection. Every message and voice note is encrypted directly on your device with <strong>AES-256-GCM</strong> and disappears forever after <strong>30 seconds</strong>.
+    <p class="mt-3 text-slate-400 text-sm sm:text-base leading-relaxed max-w-md">
+      Instant, free 1-on-1 chat. Meet random people from all over the world or share a direct room link.
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full mt-6 max-w-md text-left text-xs text-slate-300">
-      <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-        <i data-lucide="lock" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-        <span>ECDH Key Exchange + AES-GCM</span>
-      </div>
-      <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-        <i data-lucide="clock" class="w-4 h-4 text-amber-400 shrink-0"></i>
-        <span>30s Self-Destructing Messages</span>
-      </div>
-      <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-        <i data-lucide="mic" class="w-4 h-4 text-purple-400 shrink-0"></i>
-        <span>Encrypted Voice Notes</span>
-      </div>
-      <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-        <i data-lucide="fingerprint" class="w-4 h-4 text-cyan-400 shrink-0"></i>
-        <span>Visual Safety Fingerprint</span>
-      </div>
-    </div>
-
     <!-- Matchmaking Controls -->
-    <div class="mt-6 flex flex-col items-center gap-3 w-full max-w-xs">
+    <div class="mt-8 flex flex-col items-center gap-3 w-full max-w-xs">
       <button
         id="btn-start"
         onclick="app.startMatchmaking()"
         class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white font-semibold text-sm shadow-xl shadow-indigo-500/25 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
       >
         <i data-lucide="sparkles" class="w-4 h-4"></i>
-        <span>Find Random Stranger</span>
+        <span>Start Chatting</span>
       </button>
 
       <!-- Instant 1-Click Shareable Link Button -->
@@ -152,31 +123,21 @@
       </div>
     </div>
 
-    <p class="mt-5 text-[11px] text-slate-500">
+    <p class="mt-6 text-[11px] text-slate-500">
       Press <kbd class="px-1.5 py-0.5 bg-slate-900 border border-slate-800 rounded text-slate-400 font-mono text-[10px]">Esc</kbd> anytime to Stop or Find Next
     </p>
   </main>
 
   <!-- Active Chat Screen (Initially Hidden) -->
   <main id="chat-screen" class="hidden flex-1 flex flex-col max-w-4xl w-full mx-auto overflow-hidden">
-    <!-- Top Safety Bar for E2EE visual verification -->
-    <div id="safety-bar" class="px-4 py-2 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 shrink-0">
-      <span class="flex items-center gap-1.5 text-emerald-400 font-medium">
-        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> End-to-End Encrypted (AES-GCM)
-      </span>
-      <span id="safety-bar-text" class="text-slate-400">
-        Verifying secure keys...
-      </span>
-    </div>
-
     <!-- Chat Messages Scroll Container -->
     <div id="messages-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
       
       <!-- Waiting Spinner Indicator -->
       <div id="waiting-indicator" class="hidden flex-col items-center justify-center h-full text-slate-400 gap-3 py-12">
         <div class="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        <p class="text-sm font-semibold text-slate-200">Searching for a stranger...</p>
-        <p id="waiting-details" class="text-xs text-slate-400 font-mono">Connecting to matchmaking lobby...</p>
+        <p class="text-sm font-semibold text-slate-200">Looking for a stranger...</p>
+        <p id="waiting-details" class="text-xs text-slate-400">Connecting you with someone...</p>
         
         <!-- Quick copy current room link while waiting -->
         <div id="waiting-share-box" class="mt-2 flex flex-col items-center gap-2">
@@ -235,7 +196,7 @@
           type="button"
           onclick="app.toggleVoiceRecording()"
           class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors shrink-0 cursor-pointer"
-          title="Record encrypted voice note"
+          title="Send voice note"
         >
           <i id="record-icon" data-lucide="mic" class="w-4 h-4 text-indigo-400"></i>
           <span id="record-label" class="hidden text-xs font-semibold text-rose-400 ml-1.5">0s Send</span>
@@ -246,7 +207,7 @@
           id="chat-input"
           type="text"
           autocomplete="off"
-          placeholder="Type an encrypted message... (Press Enter)"
+          placeholder="Type a message... (Press Enter to send)"
           oninput="app.handleTyping()"
           class="flex-1 bg-slate-800/80 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         />
@@ -264,8 +225,8 @@
       <!-- Bottom Helper Info -->
       <div class="flex justify-between items-center mt-2 px-1 text-[11px] text-slate-500">
         <span>Press <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300 font-mono text-[10px]">Esc</kbd> to Stop / Next</span>
-        <span class="flex items-center gap-1 text-amber-400/90">
-          <i data-lucide="clock" class="w-3 h-3"></i> Messages self-destruct in 30s
+        <span class="flex items-center gap-1 text-slate-400">
+          <i data-lucide="clock" class="w-3 h-3 text-amber-400"></i> Messages disappear in 30s
         </span>
       </div>
     </footer>
@@ -275,6 +236,7 @@
   <script>
     /**
      * Web Crypto API Helper for ECDH (P-256) Key Agreement & AES-256-GCM
+     * (Runs completely in background with zero tech clutter on UI)
      */
     const CryptoService = {
       async generateKeyPair() {
@@ -309,25 +271,6 @@
           true,
           ["encrypt", "decrypt"]
         );
-      },
-
-      async generateSafetyFingerprint(sharedKey) {
-        const rawKey = await window.crypto.subtle.exportKey("raw", sharedKey);
-        const hashBuffer = await window.crypto.subtle.digest("SHA-256", rawKey);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-
-        const codeNum = ((hashArray[0] << 24 | hashArray[1] << 16 | hashArray[2] << 8 | hashArray[3]) >>> 0) % 1000000;
-        const code = codeNum.toString().padStart(6, '0');
-
-        const emojis = ["🛡️", "⚡", "🔑", "🪐", "💎", "🌟", "🔥", "🚀", "🍀", "🌊", "🦊", "🔮", "🌈", "🧩", "🦄", "🎯"];
-        const emojiStr = [
-          emojis[hashArray[4] % emojis.length],
-          emojis[hashArray[5] % emojis.length],
-          emojis[hashArray[6] % emojis.length],
-          emojis[hashArray[7] % emojis.length]
-        ].join(' ');
-
-        return { code, emojis: emojiStr };
       },
 
       async encryptData(sharedKey, data) {
@@ -387,6 +330,30 @@
     };
 
     /**
+     * Client-Side Content Safety Guard
+     * Scans for high-toxicity or extreme hate/spam words client-side
+     */
+    const SafetyModerator = {
+      blockedPatterns: [
+        /\b(kill\s+yourself|kys)\b/i,
+        /\b(die\s+in\s+a\s+fire)\b/i
+      ],
+
+      checkSafety(text) {
+        if (!text) return { isSafe: true };
+        for (const pattern of this.blockedPatterns) {
+          if (pattern.test(text)) {
+            return {
+              isSafe: false,
+              reason: "Message flagged for harmful content."
+            };
+          }
+        }
+        return { isSafe: true };
+      }
+    };
+
+    /**
      * Main GhostChat App Controller
      */
     class GhostChatApp {
@@ -398,11 +365,10 @@
         this.activeRoomId = null;
         this.probeTimeout = null;
 
-        // E2EE
+        // Crypto State
         this.localKeyPair = null;
         this.remotePublicKeyBase64 = null;
         this.sharedKey = null;
-        this.safetyFingerprint = null;
         this.isHandshakeComplete = false;
 
         // Voice Recording
@@ -420,7 +386,7 @@
         this.messages = [];
         this.MESSAGE_LIFETIME = 30; // seconds
 
-        // Public STUN configuration for peer connectivity
+        // Public STUN configuration
         this.iceConfig = {
           iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
@@ -480,7 +446,6 @@
           chatScreen.classList.add('hidden');
           dot.className = "w-2 h-2 rounded-full bg-slate-500";
           text.textContent = "Offline";
-          this.hideSafetyBadge();
         } else {
           idleScreen.classList.add('hidden');
           chatScreen.classList.remove('hidden');
@@ -497,7 +462,6 @@
             chatInput.placeholder = "Looking for a stranger...";
             btnSend.disabled = true;
             btnRecord.classList.add('opacity-50', 'pointer-events-none');
-            this.hideSafetyBadge();
           } else if (this.status === 'chatting') {
             waitingIndicator.classList.add('hidden');
             waitingIndicator.classList.remove('flex');
@@ -505,17 +469,17 @@
             const isReady = !!this.sharedKey;
             if (isReady) {
               dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-              text.textContent = "Connected (E2EE)";
+              text.textContent = "Connected";
               chatInput.disabled = false;
-              chatInput.placeholder = "Type an encrypted message... (Press Enter)";
+              chatInput.placeholder = "Type a message... (Press Enter)";
               btnSend.disabled = false;
               btnRecord.classList.remove('opacity-50', 'pointer-events-none');
               chatInput.focus();
             } else {
               dot.className = "w-2 h-2 rounded-full bg-indigo-400 animate-pulse";
-              text.textContent = "Securing Keys...";
+              text.textContent = "Connecting...";
               chatInput.disabled = true;
-              chatInput.placeholder = "Establishing ECDH key agreement...";
+              chatInput.placeholder = "Connecting to stranger...";
               btnSend.disabled = true;
               btnRecord.classList.add('opacity-50', 'pointer-events-none');
             }
@@ -535,35 +499,10 @@
             chatInput.placeholder = "Chat disconnected. Click Next to find a stranger.";
             btnSend.disabled = true;
             btnRecord.classList.add('opacity-50', 'pointer-events-none');
-            this.hideSafetyBadge();
           }
         }
 
         lucide.createIcons();
-      }
-
-      showSafetyBadge(fingerprint) {
-        const badge = document.getElementById('safety-badge');
-        const emojis = document.getElementById('safety-emojis');
-        const code = document.getElementById('safety-code');
-        const safetyBarText = document.getElementById('safety-bar-text');
-
-        badge.classList.remove('hidden');
-        badge.classList.add('flex');
-        emojis.textContent = fingerprint.emojis;
-        code.textContent = `#${fingerprint.code}`;
-
-        safetyBarText.innerHTML = `Safety Code: <strong class="text-emerald-400 font-mono">${fingerprint.emojis} #${fingerprint.code}</strong>`;
-      }
-
-      hideSafetyBadge() {
-        const badge = document.getElementById('safety-badge');
-        badge.classList.add('hidden');
-        badge.classList.remove('flex');
-        const safetyBarText = document.getElementById('safety-bar-text');
-        if (safetyBarText) {
-          safetyBarText.textContent = "End-to-End Encrypted (AES-GCM)";
-        }
       }
 
       // Matchmaking & Room Logic
@@ -574,11 +513,10 @@
         this.renderAllMessages();
         this.updateStatusDisplay();
 
-        // 4 deterministic lobby channels for instant pairing without hopping
         const lobbySlot = (Math.floor(Date.now() / 60000) % 3) + 1;
-        const lobbyId = `ghostchat-v3-public-lobby-${lobbySlot}`;
+        const lobbyId = `ghostchat-v4-lobby-${lobbySlot}`;
         this.activeRoomId = lobbyId;
-        this.connectOrHostRoom(lobbyId, "random matchmaking");
+        this.connectOrHostRoom(lobbyId, "matchmaking");
       }
 
       createAndCopyShareLink() {
@@ -598,7 +536,7 @@
 
       copyCurrentRoomLink() {
         if (!this.activeRoomId) return;
-        const code = this.activeRoomId.replace('ghostchat-room-', '').replace('ghostchat-v3-public-lobby-', 'lobby-');
+        const code = this.activeRoomId.replace('ghostchat-room-', '').replace('ghostchat-v4-lobby-', 'lobby-');
         const directUrl = `${window.location.origin}${window.location.pathname}#room-${code}`;
         navigator.clipboard.writeText(directUrl).then(() => {
           const textEl = document.getElementById('waiting-copy-text');
@@ -640,7 +578,6 @@
           }
         };
 
-        // Step 1: Probe as client to see if host already exists
         testPeer = new Peer({ config: this.iceConfig });
 
         testPeer.on('open', () => {
@@ -657,14 +594,13 @@
             this.setupConnectionHandlers();
           });
 
-          conn.on('error', (err) => {
+          conn.on('error', () => {
             if (connected) return;
             connected = true;
             cleanupTestPeer();
             this.hostRoom(roomId, displayName);
           });
 
-          // If probe doesn't connect in 2 seconds, become the host
           this.probeTimeout = setTimeout(() => {
             if (connected) return;
             connected = true;
@@ -673,7 +609,7 @@
           }, 2000);
         });
 
-        testPeer.on('error', (err) => {
+        testPeer.on('error', () => {
           if (connected) return;
           connected = true;
           cleanupTestPeer();
@@ -706,7 +642,6 @@
 
         hostPeer.on('error', (err) => {
           if (err.type === 'unavailable-id') {
-            // Someone claimed the host ID right as we tried, connect as client
             setTimeout(() => {
               this.connectAsClientDirect(roomId);
             }, 400);
@@ -740,22 +675,18 @@
         this.isHandshakeComplete = false;
         this.updateStatusDisplay();
 
-        this.addSystemMessage("Connected to partner! Negotiating End-to-End Encryption...");
+        this.addSystemMessage("You're now chatting with a random stranger. Say hi!");
 
-        // Generate local ECDH keys immediately
         try {
           this.localKeyPair = await CryptoService.generateKeyPair();
         } catch (err) {
-          console.error("Local key generation error:", err);
-          this.addSystemMessage("Failed to generate local encryption keys.");
+          console.error("Key generation error:", err);
           return;
         }
 
-        // Attach DATA listener immediately to avoid dropping early messages
         this.conn.on('data', async (payload) => {
           if (!payload) return;
 
-          // Match signaling
           if (payload.__protocol === 'GHOSTCHAT_MATCH') {
             if (payload.type === 'busy') {
               this.handlePartnerDisconnected();
@@ -763,7 +694,6 @@
             return;
           }
 
-          // E2EE Protocol events
           if (payload.__protocol === 'GHOSTCHAT_E2EE') {
             if (payload.type === 'public_key') {
               this.remotePublicKeyBase64 = payload.publicKey;
@@ -774,7 +704,6 @@
             return;
           }
 
-          // Encrypted Data Payload
           if (payload.ciphertext && payload.iv) {
             try {
               if (!this.sharedKey) return;
@@ -813,7 +742,6 @@
           this.handlePartnerDisconnected();
         });
 
-        // Ensure connection is open before transmitting public key
         const sendLocalPublicKey = async () => {
           try {
             const pubKeyBase64 = await CryptoService.exportPublicKey(this.localKeyPair.publicKey);
@@ -844,15 +772,10 @@
         try {
           const remotePubKey = await CryptoService.importPublicKey(this.remotePublicKeyBase64);
           this.sharedKey = await CryptoService.deriveSharedKey(this.localKeyPair.privateKey, remotePubKey);
-          this.safetyFingerprint = await CryptoService.generateSafetyFingerprint(this.sharedKey);
           this.isHandshakeComplete = true;
-
-          this.showSafetyBadge(this.safetyFingerprint);
           this.updateStatusDisplay();
-          this.addSystemMessage("🔒 Direct AES-256-GCM encryption established. Messages self-destruct after 30 seconds.");
         } catch (e) {
           console.error("Key derivation failure:", e);
-          this.addSystemMessage("Failed to derive shared encryption key.");
         }
       }
 
@@ -890,18 +813,24 @@
         this.sharedKey = null;
         this.localKeyPair = null;
         this.remotePublicKeyBase64 = null;
-        this.safetyFingerprint = null;
         this.isHandshakeComplete = false;
         this.showPartnerTyping(false);
         this.stopVoiceRecording(false);
       }
 
-      // Messaging
+      // Messaging with Content Safety Guard
       async handleSendMessage(e) {
         e?.preventDefault();
         const input = document.getElementById('chat-input');
         const text = input.value.trim();
         if (!text || this.status !== 'chatting' || !this.sharedKey || !this.conn || !this.conn.open) return;
+
+        // Content moderation safety check
+        const safety = SafetyModerator.checkSafety(text);
+        if (!safety.isSafe) {
+          alert(`Cannot send message: ${safety.reason}`);
+          return;
+        }
 
         input.value = '';
 
@@ -923,7 +852,7 @@
 
           this.sendTypingSignal(false);
         } catch (err) {
-          console.error("Encryption failed:", err);
+          console.error("Send failed:", err);
         }
       }
 
@@ -961,7 +890,7 @@
         this.scrollToBottom();
       }
 
-      // Voice Notes (Audio Recording)
+      // Voice Notes
       async toggleVoiceRecording() {
         if (this.status !== 'chatting' || !this.sharedKey) return;
         if (this.isRecording) {
@@ -1018,7 +947,7 @@
                   sender: 'you'
                 });
               } catch (e) {
-                console.error("Audio encryption failed:", e);
+                console.error("Audio send failed:", e);
               }
             };
 
@@ -1047,7 +976,7 @@
 
         } catch (err) {
           console.error("Microphone access error:", err);
-          alert("Could not access microphone. Please check browser microphone permissions.");
+          alert("Could not access microphone.");
         }
       }
 
@@ -1071,7 +1000,7 @@
         }
       }
 
-      // Messages and 30-second countdown rendering
+      // Messages and 30s Disappearing loop
       addSystemMessage(text) {
         this.messages.push({
           id: 'sys-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
@@ -1120,7 +1049,7 @@
               </button>
               <div class="flex flex-col">
                 <span class="text-xs font-semibold">Voice Note</span>
-                <span class="text-[10px] opacity-75">Encrypted WebM / Opus</span>
+                <span class="text-[10px] opacity-75">Audio</span>
               </div>
             </div>
           `;
